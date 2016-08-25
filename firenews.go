@@ -45,6 +45,7 @@ var newsSource = map[string]string{
 	"sina.com.tw":       "臺灣新浪網",
 	"ntdtv.com":         "NTDTV",
 	"ctitv.com.tw":      "必POTV",
+	"travelnews.tw":     "宜蘭新聞網",
 }
 
 // RssItem struct
