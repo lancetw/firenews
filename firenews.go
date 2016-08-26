@@ -34,6 +34,7 @@ var newsSource = map[string]string{
 	"ttv.com.tw":        "台視新聞",
 	"cts.com.tw":        "華視新聞",
 	"musou.tw":          "沃草國會無雙",
+	"thenewslens.com":   "The News Lens關鍵評論網",
 	"yam.com":           "蕃新聞",
 	"taiwanhot.net":     "台灣好新聞",
 	"knowing.asia":      "Knowing",
@@ -135,6 +136,28 @@ func GetURL(str string) (string, string) {
 	return url.Id, longURL
 }
 
+// UinqueCollect makes collect unqiue
+func UinqueCollect(collect []RssItem) {
+	pack := make(map[string]RssItem)
+	result := []RssItem{}
+	for _, item := range collect {
+		pack[item.Link] = item
+	}
+	for _, v := range pack {
+		result = append(result, v)
+	}
+	copy(collect, result)
+}
+
+// CleanupCollect makes collect clean
+func CleanupCollect(collect []RssItem) {
+	for i, item := range collect {
+		if strings.Contains(item.Title, "關鍵字搜尋") {
+			collect = collect[:i+copy(collect[i:], collect[i+1:])]
+		}
+	}
+}
+
 func main() {
 	router := gin.Default()
 
@@ -157,17 +180,22 @@ func main() {
 	v1 := router.Group("/api/news/v1")
 	{
 		v1.GET("/main", func(c *gin.Context) {
-			news0 := LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439003")
-			news1 := LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
-			news2 := LoadRSS("颱風 新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/12744255099028442939")
-			news3 := LoadRSS("熱帶低氣壓 新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
-			news0 = append(news0, news1...)
-			news0 = append(news0, news2...)
-			news0 = append(news0, news3...)
-			sort.Sort(ByTime(news0))
+			var news [5]([]RssItem)
+			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439003")
+			news[1] = LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
+			news[2] = LoadRSS("颱風 新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/12744255099028442939")
+			news[3] = LoadRSS("熱帶低氣壓 新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
+			news[4] = LoadRSS("火災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2277690879891404912")
+			news[0] = append(news[0], news[1]...)
+			news[0] = append(news[0], news[2]...)
+			news[0] = append(news[0], news[3]...)
+			news[0] = append(news[0], news[4]...)
+			UinqueCollect(news[0])
+			sort.Sort(ByTime(news[0]))
+			CleanupCollect(news[0])
 
 			c.JSON(200, gin.H{
-				"news": news0,
+				"news": news[0],
 			})
 		})
 		v1.GET("/city", func(c *gin.Context) {
@@ -179,13 +207,14 @@ func main() {
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
-			news0 := LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/12744255099028442939")
-			news1 := LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
-			news0 = append(news0, news1...)
-			sort.Sort(ByTime(news0))
+			var news [3]([]RssItem)
+			news[0] = LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/12744255099028442939")
+			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
+			news[0] = append(news[0], news[1]...)
+			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
-				"news": news0,
+				"news": news[0],
 			})
 		})
 	}
