@@ -47,6 +47,8 @@ var newsSource = map[string]string{
 	"ntdtv.com":         "NTDTV",
 	"ctitv.com.tw":      "必POTV",
 	"travelnews.tw":     "宜蘭新聞網",
+	"chinesetoday.com":  "國際日報",
+	"gamebase.com.tw":   "遊戲基地",
 }
 
 // RssItem struct
@@ -137,25 +139,27 @@ func GetURL(str string) (string, string) {
 }
 
 // UinqueCollect makes collect unqiue
-func UinqueCollect(collect []RssItem) {
+func UinqueCollect(collect []RssItem) []RssItem {
 	pack := make(map[string]RssItem)
 	result := []RssItem{}
 	for _, item := range collect {
-		pack[item.Link] = item
+		pack[item.Title] = item
 	}
 	for _, v := range pack {
 		result = append(result, v)
 	}
-	copy(collect, result)
+	return result
 }
 
 // CleanupCollect makes collect clean
-func CleanupCollect(collect []RssItem) {
+func CleanupCollect(collect []RssItem) []RssItem {
 	for i, item := range collect {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
 			collect = collect[:i+copy(collect[i:], collect[i+1:])]
 		}
 	}
+
+	return collect
 }
 
 func main() {
@@ -190,9 +194,9 @@ func main() {
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
 			news[0] = append(news[0], news[4]...)
-			UinqueCollect(news[0])
+			news[0] = UinqueCollect(news[0])
 			sort.Sort(ByTime(news[0]))
-			CleanupCollect(news[0])
+			news[0] = CleanupCollect(news[0])
 
 			c.JSON(200, gin.H{
 				"news": news[0],
