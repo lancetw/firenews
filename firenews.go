@@ -1,6 +1,7 @@
 package main
 
 import (
+	"hash/fnv"
 	"net/http"
 	"sort"
 	"strings"
@@ -39,6 +40,7 @@ var newsSource = map[string]string{
 	"taiwanhot.net":     "台灣好新聞",
 	"knowing.asia":      "Knowing",
 	"101newsmedia.com":  "一零一傳媒",
+	"peopo.org":         "公民新聞",
 	"gpwb.gov.tw":       "軍事新聞網",
 	"ipcf.org.tw":       "原住民族電視台",
 	"epochtimes.com":    "大紀元",
@@ -49,6 +51,7 @@ var newsSource = map[string]string{
 	"travelnews.tw":     "宜蘭新聞網",
 	"chinesetoday.com":  "國際日報",
 	"gamebase.com.tw":   "遊戲基地",
+	"soundofhope.org":   "希望之聲",
 }
 
 // RssItem struct
@@ -61,6 +64,7 @@ type RssItem struct {
 	Tag        string    `json:"tag"`
 	Time       time.Time `json:"time"`
 	Status     int       `json:"status"`
+	Hash       uint32    `json:"hash"`
 }
 
 // ByTime implements sort.Interface for []RssItem based on
@@ -88,16 +92,23 @@ func LoadRSS(tag string, url string) []RssItem {
 			local = local.In(location)
 		}
 
+		title := p.Sanitize(item.Title)
+
+		h := fnv.New32a()
+		h.Write([]byte(item.Title))
+		hashnum := h.Sum32()
+
 		link, originLink := GetURL(item.Link)
 		news := RssItem{
 			Link:       link,
 			OriginLink: originLink,
 			Time:       local,
 			TimeText:   local.Format("15:04"),
-			Title:      p.Sanitize(item.Title),
+			Title:      title,
 			Source:     GetNewsSource(item.Link),
 			Tag:        tag,
 			Status:     0,
+			Hash:       hashnum,
 		}
 
 		collect = append(collect, news)
@@ -138,28 +149,29 @@ func GetURL(str string) (string, string) {
 	return url.Id, longURL
 }
 
-// UinqueCollect makes collect unqiue
-func UinqueCollect(collect []RssItem) []RssItem {
-	pack := make(map[string]RssItem)
-	result := []RssItem{}
-	for _, item := range collect {
-		pack[item.Title] = item
+// UinqueElements removes duplicates
+func UinqueElements(elements []RssItem) []RssItem {
+	tmp := make(map[string]RssItem, 0)
+	for _, ele := range elements {
+		tmp[ele.Title] = ele
 	}
-	for _, v := range pack {
-		result = append(result, v)
+	var i int
+	for _, ele := range tmp {
+		elements[i] = ele
+		i++
 	}
-	return result
+	return elements[:len(tmp)]
 }
 
-// CleanupCollect makes collect clean
-func CleanupCollect(collect []RssItem) []RssItem {
-	for i, item := range collect {
+// CleanupElements makes elements clean
+func CleanupElements(elements []RssItem) []RssItem {
+	for i, item := range elements {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
-			collect = collect[:i+copy(collect[i:], collect[i+1:])]
+			elements = elements[:i+copy(elements[i:], elements[i+1:])]
 		}
 	}
 
-	return collect
+	return elements
 }
 
 func main() {
@@ -194,9 +206,9 @@ func main() {
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
 			news[0] = append(news[0], news[4]...)
-			news[0] = UinqueCollect(news[0])
+			news[0] = UinqueElements(news[0])
 			sort.Sort(ByTime(news[0]))
-			news[0] = CleanupCollect(news[0])
+			news[0] = CleanupElements(news[0])
 
 			c.JSON(200, gin.H{
 				"news": news[0],
@@ -204,7 +216,9 @@ func main() {
 		})
 		v1.GET("/city", func(c *gin.Context) {
 			news := LoadRSS("新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13141838524979976729")
+			news = UinqueElements(news)
 			sort.Sort(ByTime(news))
+			news = CleanupElements(news)
 
 			c.JSON(200, gin.H{
 				"news": news,
@@ -215,7 +229,9 @@ func main() {
 			news[0] = LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/12744255099028442939")
 			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
 			news[0] = append(news[0], news[1]...)
+			news[0] = UinqueElements(news[0])
 			sort.Sort(ByTime(news[0]))
+			news[0] = CleanupElements(news[0])
 
 			c.JSON(200, gin.H{
 				"news": news[0],
