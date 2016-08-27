@@ -3,6 +3,7 @@ package main
 import (
 	"hash/fnv"
 	"net/http"
+	"net/url"
 	"sort"
 	"strings"
 	"time"
@@ -52,6 +53,7 @@ var newsSource = map[string]string{
 	"chinesetoday.com":  "國際日報",
 	"gamebase.com.tw":   "遊戲基地",
 	"soundofhope.org":   "希望之聲",
+	"cdnews.com.tw":     "中央日報",
 }
 
 // RssItem struct
@@ -126,6 +128,11 @@ func GetNewsSource(str string) string {
 	return "!未知的來源!"
 }
 
+// URLEncoded encodes a string
+func URLDecode(str string) (string, error) {
+	return url.QueryUnescape(str)
+}
+
 // CleanURL cuts a stting as url
 func CleanURL(str string) string {
 	return strings.Split(strings.Split(str, "&url=")[1], "&ct=")[0]
@@ -134,7 +141,8 @@ func CleanURL(str string) string {
 // GetURL cuts a string as url and makes short url
 func GetURL(str string) (string, string) {
 	developerKey := "AIzaSyBW-K5dEyqgBRCP5AWZyh61EbZLP4QkniA"
-	longURL := CleanURL(str)
+	cleanedURL := CleanURL(str)
+	longURL, _ := URLDecode(cleanedURL)
 	client := &http.Client{
 		Transport: &transport.APIKey{Key: developerKey},
 	}
