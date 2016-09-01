@@ -20,40 +20,57 @@ const timeZone = "Asia/Taipei"
 const dateTimeFormat = "2006-01-02T15:04:05Z07:00"
 
 var newsSource = map[string]string{
-	"chinatimes.com":    "中時電子報",
-	"ettoday.net":       "ETtoday",
-	"tvbs.com.tw":       "TVBS",
-	"appledaily.com.tw": "蘋果日報",
-	"ftv.com.tw":        "民視新聞",
-	"ltn.com.tw":        "自由時報電子報",
-	"udn.com":           "聯合新聞網",
-	"ebc.net.tw":        "東森新聞",
-	"setn.com":          "三立新聞網",
-	"pts.org.tw":        "公視新聞",
-	"nownews.com":       "NOWnews今日新聞",
-	"cna.com.tw":        "中央通訊社",
-	"hinet.net":         "自由時報電子報",
-	"ttv.com.tw":        "台視新聞",
-	"cts.com.tw":        "華視新聞",
-	"musou.tw":          "沃草國會無雙",
-	"thenewslens.com":   "The News Lens關鍵評論網",
-	"yam.com":           "蕃新聞",
-	"taiwanhot.net":     "台灣好新聞",
-	"knowing.asia":      "Knowing",
-	"101newsmedia.com":  "一零一傳媒",
-	"peopo.org":         "公民新聞",
-	"gpwb.gov.tw":       "軍事新聞網",
-	"ipcf.org.tw":       "原住民族電視台",
-	"epochtimes.com":    "大紀元",
-	"tw.on.cc":          "on.cc東網台灣",
-	"sina.com.tw":       "臺灣新浪網",
-	"ntdtv.com":         "NTDTV",
-	"ctitv.com.tw":      "必POTV",
-	"travelnews.tw":     "宜蘭新聞網",
-	"chinesetoday.com":  "國際日報",
-	"gamebase.com.tw":   "遊戲基地",
-	"soundofhope.org":   "希望之聲",
-	"cdnews.com.tw":     "中央日報",
+	"chinatimes.com":     "中時電子報",
+	"ettoday.net":        "ETtoday",
+	"tvbs.com.tw":        "TVBS",
+	"appledaily.com.tw":  "蘋果日報",
+	"ftv.com.tw":         "民視新聞",
+	"ltn.com.tw":         "自由時報電子報",
+	"udn.com":            "聯合新聞網",
+	"ebc.net.tw":         "東森新聞",
+	"setn.com":           "三立新聞網",
+	"pts.org.tw":         "公視新聞",
+	"nownews.com":        "NOWnews",
+	"mdnkids.com":        "國語日報",
+	"cna.com.tw":         "中央通訊社",
+	"hinet.net":          "自由時報電子報",
+	"storm.mg":           "風傳媒",
+	"ttv.com.tw":         "台視新聞",
+	"cts.com.tw":         "華視新聞",
+	"ithome.com.tw":      "iThome Online",
+	"eradio.ner.gov.tw":  "國立教育廣播電台",
+	"mradio.com.tw":      "全國廣播",
+	"musou.tw":           "沃草國會無雙",
+	"anntw.com":          "台灣醒報",
+	"thenewslens.com":    "The News Lens關鍵評論網",
+	"coolloud.org.tw":    "苦勞網",
+	"yam.com":            "蕃新聞",
+	"taiwanhot.net":      "台灣好新聞",
+	"knowing.asia":       "Knowing",
+	"101newsmedia.com":   "一零一傳媒",
+	"peopo.org":          "公民新聞",
+	"gpwb.gov.tw":        "軍事新聞網",
+	"ipcf.org.tw":        "原住民族電視台",
+	"ntdtv.com.tw":       "新唐人亞太電視台",
+	"cnyes.com":          "鉅亨網",
+	"epochtimes.com":     "大紀元",
+	"bltv.tv":            "人間衛視",
+	"merit-times.com.tw": "人間福報",
+	"tw.on.cc":           "on.cc東網台灣",
+	"sina.com.tw":        "臺灣新浪網",
+	"ntdtv.com":          "NTDTV",
+	"ctitv.com.tw":       "必POTV",
+	"travelnews.tw":      "宜蘭新聞網",
+	"chinesetoday.com":   "國際日報",
+	"gamebase.com.tw":    "遊戲基地",
+	"soundofhope.org":    "希望之聲",
+	"cdnews.com.tw":      "中央日報",
+}
+
+var blockedSource = map[string]bool{
+	"人間衛視":  true,
+	"臺灣新浪網": true,
+	"大紀元":   true,
 }
 
 // RssItem struct
@@ -128,7 +145,7 @@ func GetNewsSource(str string) string {
 	return "!未知的來源!"
 }
 
-// URLEncoded encodes a string
+// URLDecode encodes a string
 func URLDecode(str string) (string, error) {
 	return url.QueryUnescape(str)
 }
@@ -175,7 +192,9 @@ func UinqueElements(elements []RssItem) []RssItem {
 func CleanupElements(elements []RssItem) []RssItem {
 	for i, item := range elements {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
-			elements = elements[:i+copy(elements[i:], elements[i+1:])]
+			elements = append(elements[:i], elements[i+1:]...)
+		} else if _, found := blockedSource[item.Source]; found {
+			elements = append(elements[:i], elements[i+1:]...)
 		}
 	}
 
@@ -217,7 +236,6 @@ func main() {
 			news[0] = UinqueElements(news[0])
 			sort.Sort(ByTime(news[0]))
 			news[0] = CleanupElements(news[0])
-
 			c.JSON(200, gin.H{
 				"news": news[0],
 			})
@@ -227,7 +245,6 @@ func main() {
 			news = UinqueElements(news)
 			sort.Sort(ByTime(news))
 			news = CleanupElements(news)
-
 			c.JSON(200, gin.H{
 				"news": news,
 			})
