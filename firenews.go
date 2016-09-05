@@ -66,6 +66,7 @@ var newsSource = map[string]string{
 	"soundofhope.org":    "希望之聲",
 	"cdnews.com.tw":      "中央日報",
 	"idn.com.tw":         "自立晚報",
+	"rti.org.tw":         "中央廣播電台",
 }
 
 var blockedSource = map[string]bool{
@@ -194,9 +195,11 @@ func UinqueElements(elements []RssItem) []RssItem {
 func CleanupElements(elements []RssItem) []RssItem {
 	for i, item := range elements {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
-			elements = append(elements[:i], elements[i+1:]...)
+			elements[i] = elements[len(elements)-1]
+			elements = elements[0 : len(elements)-1]
 		} else if _, found := blockedSource[item.Source]; found {
-			elements = append(elements[:i], elements[i+1:]...)
+			elements[i] = elements[len(elements)-1]
+			elements = elements[0 : len(elements)-1]
 		}
 	}
 
@@ -236,8 +239,9 @@ func main() {
 			news[0] = append(news[0], news[3]...)
 			news[0] = append(news[0], news[4]...)
 			news[0] = UinqueElements(news[0])
+			news[0] = CleanupElements(news[0])
 			sort.Sort(ByTime(news[0]))
-			//news[0] = CleanupElements(news[0])
+
 			c.JSON(200, gin.H{
 				"news": news[0],
 			})
@@ -245,8 +249,9 @@ func main() {
 		v1.GET("/city", func(c *gin.Context) {
 			news := LoadRSS("新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13141838524979976729")
 			news = UinqueElements(news)
+			news = CleanupElements(news)
 			sort.Sort(ByTime(news))
-			//news = CleanupElements(news)
+
 			c.JSON(200, gin.H{
 				"news": news,
 			})
@@ -257,8 +262,8 @@ func main() {
 			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545437714")
 			news[0] = append(news[0], news[1]...)
 			news[0] = UinqueElements(news[0])
+			news[0] = CleanupElements(news[0])
 			sort.Sort(ByTime(news[0]))
-			//news[0] = CleanupElements(news[0])
 
 			c.JSON(200, gin.H{
 				"news": news[0],
