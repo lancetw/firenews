@@ -69,10 +69,10 @@ var newsSource = map[string]string{
 }
 
 var blockedSource = map[string]bool{
-	"人間衛視":     true,
-	"臺灣新浪網":    true,
-	"大紀元":      true,
-	"n.cc東網台灣": true,
+	"人間衛視":      true,
+	"臺灣新浪網":     true,
+	"大紀元":       true,
+	"on.cc東網台灣": true,
 }
 
 // RssItem struct
