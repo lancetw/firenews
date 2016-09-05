@@ -65,12 +65,14 @@ var newsSource = map[string]string{
 	"gamebase.com.tw":    "遊戲基地",
 	"soundofhope.org":    "希望之聲",
 	"cdnews.com.tw":      "中央日報",
+	"idn.com.tw":         "自立晚報",
 }
 
 var blockedSource = map[string]bool{
-	"人間衛視":  true,
-	"臺灣新浪網": true,
-	"大紀元":   true,
+	"人間衛視":     true,
+	"臺灣新浪網":    true,
+	"大紀元":      true,
+	"n.cc東網台灣": true,
 }
 
 // RssItem struct
