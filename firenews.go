@@ -237,7 +237,7 @@ func main() {
 			news[0] = append(news[0], news[4]...)
 			news[0] = UinqueElements(news[0])
 			sort.Sort(ByTime(news[0]))
-			news[0] = CleanupElements(news[0])
+			//news[0] = CleanupElements(news[0])
 			c.JSON(200, gin.H{
 				"news": news[0],
 			})
@@ -246,7 +246,7 @@ func main() {
 			news := LoadRSS("新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13141838524979976729")
 			news = UinqueElements(news)
 			sort.Sort(ByTime(news))
-			news = CleanupElements(news)
+			//news = CleanupElements(news)
 			c.JSON(200, gin.H{
 				"news": news,
 			})
@@ -258,7 +258,7 @@ func main() {
 			news[0] = append(news[0], news[1]...)
 			news[0] = UinqueElements(news[0])
 			sort.Sort(ByTime(news[0]))
-			news[0] = CleanupElements(news[0])
+			//news[0] = CleanupElements(news[0])
 
 			c.JSON(200, gin.H{
 				"news": news[0],
