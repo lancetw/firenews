@@ -72,20 +72,21 @@ var newsSource = map[string]string{
 }
 
 var blockedSource = map[string]bool{
-	"人間衛視":      true,
-	"臺灣新浪網":     true,
-	"大紀元":       true,
-	"on.cc東網台灣": true,
+	"bltv.tv":        true,
+	"sina.com.tw":    true,
+	"epochtimes.com": true,
+	"tw.on.cc":       true,
 }
 
 // RssItem struct
 type RssItem struct {
-	Title      string    `json:"title"`
-	TimeText   string    `json:"timeText"`
-	Link       string    `json:"link"`
-	OriginLink string    `json:"originLink"`
-	Source     string    `json:"source"`
-	Tag        string    `json:"tag"`
+	Title      string `json:"title"`
+	TimeText   string `json:"timeText"`
+	Link       string `json:"link"`
+	OriginLink string `json:"originLink"`
+	Source     string `json:"source"`
+	Tag        string `json:"tag"`
+	Keyword    string
 	Time       time.Time `json:"time"`
 	Status     int       `json:"status"`
 	Hash       uint32    `json:"hash"`
@@ -123,16 +124,19 @@ func LoadRSS(tag string, url string) []RssItem {
 		hashnum := h.Sum32()
 
 		link, originLink := GetURL(item.Link)
+		source, keyword := GetNewsSource(item.Link)
+
 		news := RssItem{
 			Link:       link,
 			OriginLink: originLink,
 			Time:       local,
 			TimeText:   local.Format("15:04"),
 			Title:      title,
-			Source:     GetNewsSource(item.Link),
+			Source:     source,
 			Tag:        tag,
 			Status:     0,
 			Hash:       hashnum,
+			Keyword:    keyword,
 		}
 
 		collect = append(collect, news)
@@ -141,13 +145,13 @@ func LoadRSS(tag string, url string) []RssItem {
 }
 
 // GetNewsSource detects news source from urls
-func GetNewsSource(str string) string {
-	for keyword := range newsSource {
-		if strings.Contains(str, keyword) {
-			return newsSource[keyword]
+func GetNewsSource(str string) (string, string) {
+	for k := range newsSource {
+		if strings.Contains(str, k) {
+			return newsSource[k], k
 		}
 	}
-	return "!未知的來源!"
+	return "!未知的來源!", ""
 }
 
 // URLDecode encodes a string
@@ -194,19 +198,11 @@ func UinqueElements(elements []RssItem) []RssItem {
 }
 
 // CleanupElements makes elements clean
-func CleanupElements(elements0 []RssItem) []RssItem {
-	elements := make([]RssItem, len(elements0))
-	copy(elements, elements0)
-
-	for i, item := range elements {
-		if strings.Contains(item.Title, "關鍵字搜尋") {
-			copy(elements[i:], elements[i+1:])
-			elements[len(elements)-1] = RssItem{}
-			elements = elements[:len(elements)-1]
-		} else if _, found := blockedSource[item.Source]; found {
-			copy(elements[i:], elements[i+1:])
-			elements[len(elements)-1] = RssItem{}
-			elements = elements[:len(elements)-1]
+func CleanupElements(elements []RssItem) []RssItem {
+	for i := len(elements) - 1; i >= 0; i-- {
+		item := elements[i]
+		if _, found := blockedSource[item.Keyword]; found {
+			elements = append(elements[:i], elements[i+1:]...)
 		}
 	}
 
