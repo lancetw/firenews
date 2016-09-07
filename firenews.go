@@ -194,21 +194,23 @@ func UinqueElements(elements []RssItem) []RssItem {
 }
 
 // CleanupElements makes elements clean
-func CleanupElements(elements []RssItem) []RssItem {
-	elements0 := make([]RssItem, len(elements))
-	copy(elements0, elements)
+func CleanupElements(elements0 []RssItem) []RssItem {
+	elements := make([]RssItem, len(elements0))
+	copy(elements, elements0)
 
 	for i, item := range elements {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
-			elements0[i] = elements0[len(elements0)-1]
-			elements0 = elements0[0 : len(elements0)-1]
+			copy(elements[i:], elements[i+1:])
+			elements[len(elements)-1] = RssItem{}
+			elements = elements[:len(elements)-1]
 		} else if _, found := blockedSource[item.Source]; found {
-			elements[i] = elements0[len(elements0)-1]
-			elements0 = elements0[0 : len(elements0)-1]
+			copy(elements[i:], elements[i+1:])
+			elements[len(elements)-1] = RssItem{}
+			elements = elements[:len(elements)-1]
 		}
 	}
 
-	return elements0
+	return elements
 }
 
 func main() {
