@@ -195,7 +195,9 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
-	elements0 := elements
+	elements0 := make([]RssItem, len(elements))
+	copy(elements0, elements)
+
 	for i, item := range elements {
 		if strings.Contains(item.Title, "關鍵字搜尋") {
 			elements0[i] = elements0[len(elements0)-1]
