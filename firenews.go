@@ -73,6 +73,7 @@ var newsSource = map[string]string{
 	"tanews.org.tw":      "台灣動物新聞網",
 	"eventsinfocus.org":  "焦點事件",
 	"cmmedia.com.tw":     "信傳媒",
+	"civilmedia.tw":      "公民行動影音紀錄資料庫",
 }
 
 var blockedSource = map[string]bool{
