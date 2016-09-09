@@ -69,6 +69,7 @@ var newsSource = map[string]string{
 	"rti.org.tw":         "中央廣播電台",
 	"times-bignews.com":  "今日大話新聞",
 	"saydigi.com":        "SayDigi點子生活",
+	"e-info.org.tw":      "環境資訊中心",
 }
 
 var blockedSource = map[string]bool{
