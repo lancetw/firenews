@@ -70,6 +70,9 @@ var newsSource = map[string]string{
 	"times-bignews.com":  "今日大話新聞",
 	"saydigi.com":        "SayDigi點子生活",
 	"e-info.org.tw":      "環境資訊中心",
+	"tanews.org.tw":      "台灣動物新聞網",
+	"eventsinfocus.org":  "焦點事件",
+	"cmmedia.com.tw":     "信傳媒",
 }
 
 var blockedSource = map[string]bool{
