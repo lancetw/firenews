@@ -33,7 +33,7 @@ var newsSource = map[string]string{
 	"nownews.com":        "NOWnews",
 	"mdnkids.com":        "國語日報",
 	"cna.com.tw":         "中央通訊社",
-	"hinet.net":          "自由時報電子報",
+	"hinet.net":          "HiNet新聞",
 	"storm.mg":           "風傳媒",
 	"ttv.com.tw":         "台視新聞",
 	"cts.com.tw":         "華視新聞",
@@ -76,6 +76,7 @@ var blockedSource = map[string]bool{
 	"sina.com.tw":    true,
 	"epochtimes.com": true,
 	"tw.on.cc":       true,
+	"hinet.net":      true,
 }
 
 // RssItem struct
