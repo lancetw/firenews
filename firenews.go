@@ -211,6 +211,8 @@ func CleanupElements(elements []RssItem) []RssItem {
 		item := elements[i]
 		if _, found := blockedSource[item.Keyword]; found {
 			elements = append(elements[:i], elements[i+1:]...)
+		} else if strings.Contains("關鍵字搜尋搜尋", item.Title) {
+			elements = append(elements[:i], elements[i+1:]...)
 		}
 	}
 
