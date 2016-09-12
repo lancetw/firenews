@@ -83,6 +83,8 @@ var newsSource = map[string]string{
 	"gov.taipei":             "臺北市政府",
 	"yunlin.gov.tw":          "雲林縣政府",
 	"taichung.gov.tw":        "臺中市政府",
+	"taitung.gov.tw":         "臺東縣政府",
+	"hccg.gov.tw":            "新竹市政府",
 	"fat.com.tw":             "遠東航空",
 	"ctust.edu.tw":           "中臺科技大學",
 	"msn.com":                "msn新聞",
