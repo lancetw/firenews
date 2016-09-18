@@ -91,14 +91,18 @@ var newsSource = map[string]string{
 	"newtalk.tw":             "新頭殼",
 	"cnabc.com":              "中央通訊社",
 	"ey.gov.tw":              "行政院全球資訊網",
+	"walkerland.com.tw":      "Walkerland",
+	"tsna.com.tw":            "tsna",
 }
 
 var blockedSource = map[string]bool{
-	"bltv.tv":        true,
-	"sina.com.tw":    true,
-	"epochtimes.com": true,
-	"tw.on.cc":       true,
-	"hinet.net":      true,
+	"bltv.tv":           true,
+	"sina.com.tw":       true,
+	"epochtimes.com":    true,
+	"tw.on.cc":          true,
+	"hinet.net":         true,
+	"walkerland.com.tw": true,
+	"tsna.com.tw":       true,
 }
 
 // RssItem struct
