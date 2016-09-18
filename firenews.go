@@ -88,6 +88,9 @@ var newsSource = map[string]string{
 	"fat.com.tw":             "遠東航空",
 	"ctust.edu.tw":           "中臺科技大學",
 	"msn.com":                "msn新聞",
+	"newtalk.tw":             "新頭殼",
+	"cnabc.com":              "中央通訊社",
+	"ey.gov.tw":              "行政院全球資訊網",
 }
 
 var blockedSource = map[string]bool{
