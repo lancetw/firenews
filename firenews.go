@@ -94,6 +94,7 @@ var newsSource = map[string]string{
 	"walkerland.com.tw":      "Walkerland",
 	"tsna.com.tw":            "tsna",
 	"voacantonese.com":       "美國之音",
+	"ct.org.tw":              "基督教論壇報",
 }
 
 var blockedSource = map[string]bool{
