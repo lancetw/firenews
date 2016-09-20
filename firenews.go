@@ -93,6 +93,7 @@ var newsSource = map[string]string{
 	"ey.gov.tw":              "行政院全球資訊網",
 	"walkerland.com.tw":      "Walkerland",
 	"tsna.com.tw":            "tsna",
+	"voacantonese.com":       "美國之音",
 }
 
 var blockedSource = map[string]bool{
