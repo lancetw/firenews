@@ -279,20 +279,32 @@ func main() {
 			})
 		})
 		v1.GET("/city", func(c *gin.Context) {
-			news := LoadRSS("新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13141838524979976729")
-			news = UinqueElements(news)
-			news = CleanupElements(news)
-			sort.Sort(ByTime(news))
+			var news [1]([]RssItem)
+			news[0] = LoadRSS("新竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13141838524979976729")
+			news[0] = UinqueElements(news[0])
+			news[0] = CleanupElements(news[0])
+			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
 				"news": news,
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
-			var news [3]([]RssItem)
+			var news [2]([]RssItem)
 			news[0] = LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/5973699102355057312")
 			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/9494720717694166142")
 			news[0] = append(news[0], news[1]...)
+			news[0] = UinqueElements(news[0])
+			news[0] = CleanupElements(news[0])
+			sort.Sort(ByTime(news[0]))
+
+			c.JSON(200, gin.H{
+				"news": news[0],
+			})
+		})
+		v1.GET("/earthquake", func(c *gin.Context) {
+			var news [1]([]RssItem)
+			news[0] = LoadRSS("地震", "https://www.google.com.tw/alerts/feeds/04784784225885481651/11159700034107135548")
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			sort.Sort(ByTime(news[0]))
