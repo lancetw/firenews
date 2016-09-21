@@ -95,16 +95,19 @@ var newsSource = map[string]string{
 	"tsna.com.tw":            "tsna",
 	"voacantonese.com":       "美國之音",
 	"ct.org.tw":              "基督教論壇報",
+	"pacificnews.com.tw":     "太平洋新聞網",
+	"housefun.com.tw":        "好房網",
 }
 
 var blockedSource = map[string]bool{
-	"bltv.tv":           true,
-	"sina.com.tw":       true,
-	"epochtimes.com":    true,
-	"tw.on.cc":          true,
-	"hinet.net":         true,
-	"walkerland.com.tw": true,
-	"tsna.com.tw":       true,
+	"bltv.tv":            true,
+	"sina.com.tw":        true,
+	"epochtimes.com":     true,
+	"tw.on.cc":           true,
+	"hinet.net":          true,
+	"walkerland.com.tw":  true,
+	"tsna.com.tw":        true,
+	"pacificnews.com.tw": true,
 }
 
 // RssItem struct
