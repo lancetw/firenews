@@ -286,7 +286,7 @@ func main() {
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
-				"news": news,
+				"news": news[0],
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
