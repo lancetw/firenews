@@ -97,6 +97,7 @@ var newsSource = map[string]string{
 	"ct.org.tw":              "基督教論壇報",
 	"pacificnews.com.tw":     "太平洋新聞網",
 	"housefun.com.tw":        "好房網",
+	"msntw.com":              "主流傳媒",
 }
 
 var blockedSource = map[string]bool{
@@ -108,6 +109,7 @@ var blockedSource = map[string]bool{
 	"walkerland.com.tw":  true,
 	"tsna.com.tw":        true,
 	"pacificnews.com.tw": true,
+	"cdnews.com.tw":      true,
 }
 
 // RssItem struct
@@ -293,10 +295,16 @@ func main() {
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
-			var news [2]([]RssItem)
+			var news [5]([]RssItem)
 			news[0] = LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/5973699102355057312")
 			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/9494720717694166142")
+			news[2] = LoadRSS("輕颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026830745")
+			news[3] = LoadRSS("中颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831531")
+			news[4] = LoadRSS("強颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831346")
 			news[0] = append(news[0], news[1]...)
+			news[0] = append(news[0], news[2]...)
+			news[0] = append(news[0], news[3]...)
+			news[0] = append(news[0], news[4]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			sort.Sort(ByTime(news[0]))
