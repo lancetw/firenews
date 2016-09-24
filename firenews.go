@@ -110,6 +110,7 @@ var blockedSource = map[string]bool{
 	"tsna.com.tw":        true,
 	"pacificnews.com.tw": true,
 	"cdnews.com.tw":      true,
+	"msntw.com":          true,
 }
 
 // RssItem struct
