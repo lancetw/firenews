@@ -98,6 +98,11 @@ var newsSource = map[string]string{
 	"pacificnews.com.tw":     "太平洋新聞網",
 	"housefun.com.tw":        "好房網",
 	"msntw.com":              "主流傳媒",
+	"kinmen.gov.tw":          "金門縣政府",
+	"chiayi.gov.tw":          "嘉義市政府",
+	"ccu.edu.tw":             "國立中正大學",
+	"npa.gov.tw":             "內政部警政署",
+	"tainan.gov.tw":          "台南市政府",
 }
 
 var blockedSource = map[string]bool{
@@ -268,14 +273,16 @@ func main() {
 	v1 := router.Group("/api/news/v1")
 	{
 		v1.GET("/main", func(c *gin.Context) {
-			var news [4]([]RssItem)
+			var news [5]([]RssItem)
 			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439003")
 			news[1] = LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
 			news[2] = LoadRSS("火災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2277690879891404912")
 			news[3] = LoadRSS("送醫", "https://www.google.com.tw/alerts/feeds/04784784225885481651/7089524768908772692")
+			news[4] = LoadRSS("cpr", "https://www.google.com.tw/alerts/feeds/04784784225885481651/1999534239766046938")
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
+			news[0] = append(news[0], news[4]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			sort.Sort(ByTime(news[0]))
