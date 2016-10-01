@@ -103,6 +103,8 @@ var newsSource = map[string]string{
 	"ccu.edu.tw":             "國立中正大學",
 	"npa.gov.tw":             "內政部警政署",
 	"tainan.gov.tw":          "台南市政府",
+	"match.net.tw":           "match生活網",
+	"pixnet.net":             "痞客邦",
 }
 
 var blockedSource = map[string]bool{
@@ -116,6 +118,8 @@ var blockedSource = map[string]bool{
 	"pacificnews.com.tw": true,
 	"cdnews.com.tw":      true,
 	"msntw.com":          true,
+	"match.net.tw":       true,
+	"pixnet.net":         true,
 }
 
 // RssItem struct
