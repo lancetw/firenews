@@ -125,6 +125,7 @@ var blockedSource = map[string]bool{
 	"pixnet.net":         true,
 	"ptt.cc":             true,
 	"xn--4gq171p.com":    true,
+	"cna.com.tw":         true,
 }
 
 // RssItem struct
