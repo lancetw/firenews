@@ -283,7 +283,7 @@ func main() {
 			news[2] = LoadRSS("火災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2277690879891404912")
 			news[3] = LoadRSS("送醫", "https://www.google.com.tw/alerts/feeds/04784784225885481651/7089524768908772692")
 			news[4] = LoadRSS("cpr", "https://www.google.com.tw/alerts/feeds/04784784225885481651/1999534239766046938")
-			news[5] = LoadRSS("", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E6%B6%88%E9%98%B2%7C%E6%95%91%E8%AD%B7%7C%E5%A4%A7%E7%81%AB%7C%E5%BB%B6%E7%87%92%7C%E9%80%81%E9%86%AB%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7Ccpr")
+			news[5] = LoadRSS("backup", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E6%B6%88%E9%98%B2%7C%E6%95%91%E8%AD%B7%7C%E5%A4%A7%E7%81%AB%7C%E5%BB%B6%E7%87%92%7C%E9%80%81%E9%86%AB%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7Ccpr")
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
