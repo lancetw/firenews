@@ -248,7 +248,7 @@ func GetURL(str string) (string, string) {
 func UinqueElements(elements []RssItem) []RssItem {
 	tmp := make(map[string]RssItem, 0)
 	for _, ele := range elements {
-		tmp[ele.Link] = ele
+		tmp[ele.Title] = ele
 	}
 	var i int
 	for _, ele := range tmp {
