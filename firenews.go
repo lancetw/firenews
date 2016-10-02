@@ -320,7 +320,7 @@ func main() {
 	v1 := router.Group("/api/news/v1")
 	{
 		v1.GET("/main", func(c *gin.Context) {
-			var news [14]([]RssItem)
+			var news [13]([]RssItem)
 			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439003")
 			news[1] = LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
 			news[2] = LoadRSS("火災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2277690879891404912")
@@ -334,7 +334,6 @@ func main() {
 			news[10] = LoadRSS("自由時報國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fworld.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
 			news[11] = LoadRSS("聯合新聞國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Finternational.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
 			news[12] = LoadRSS("中國時報國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
-			news[13] = LoadRSS("PCHome新聞社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.pchome.com.tw%2Frss%2F002&include=%E6%B6%88%E9%98%B2%7C%E6%95%91%E8%AD%B7%7C%E5%BB%B6%E7%87%92%7C%E5%A4%A7%E7%81%AB%7C%E9%80%81%E9%86%AB%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7Ccpr")
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
@@ -347,7 +346,6 @@ func main() {
 			news[0] = append(news[0], news[10]...)
 			news[0] = append(news[0], news[11]...)
 			news[0] = append(news[0], news[12]...)
-			news[0] = append(news[0], news[13]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveElements(news[0])
@@ -358,7 +356,7 @@ func main() {
 			})
 		})
 		v1.GET("/city", func(c *gin.Context) {
-			var news [10]([]RssItem)
+			var news [9]([]RssItem)
 			news[0] = LoadRSS("竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2705564241123909653")
 			news[1] = LoadRSS("中國時報地方版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82")
 			news[2] = LoadRSS("聯合新聞地方桃竹苗版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flocal_tyhcml.xml&include=%E7%AB%B9%E5%B8%82")
@@ -368,7 +366,6 @@ func main() {
 			news[6] = LoadRSS("聯合新聞社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include=%E7%AB%B9%E5%B8%82")
 			news[7] = LoadRSS("自由時報社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include=%E7%AB%B9%E5%B8%82")
 			news[8] = LoadRSS("蘋果日報社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include=%E7%AB%B9%E5%B8%82")
-			news[9] = LoadRSS("PCHome新聞社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.pchome.com.tw%2Frss%2F002&include=%E7%AB%B9%E5%B8%82")
 
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
@@ -378,7 +375,6 @@ func main() {
 			news[0] = append(news[0], news[6]...)
 			news[0] = append(news[0], news[7]...)
 			news[0] = append(news[0], news[8]...)
-			news[0] = append(news[0], news[9]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveElements(news[0])
