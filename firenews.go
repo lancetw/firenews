@@ -171,6 +171,7 @@ func LoadRSS(tag string, url string) []RssItem {
 		}
 
 		title := html.UnescapeString(p.Sanitize(item.Title))
+		title = strings.TrimSpace(strings.Replace(title, " ", " ", -1))
 
 		h := fnv.New32a()
 		h.Write([]byte(item.Title))
