@@ -132,6 +132,13 @@ var blockedSource = map[string]bool{
 	"taiwandaily.net":    true,
 }
 
+var activedSource = map[string]bool{
+	"ltn.com.tw":        true,
+	"chinatimes.com":    true,
+	"appledaily.com.tw": true,
+	"udn.com":           true,
+}
+
 // RssItem struct
 type RssItem struct {
 	Title      string `json:"title"`
@@ -268,6 +275,16 @@ func UinqueElements(elements []RssItem) []RssItem {
 	return elements[:len(tmp)]
 }
 
+// ActiveElements active elements
+func ActiveElements(elements []RssItem) []RssItem {
+	for i, item := range elements {
+		if _, found := activedSource[item.Keyword]; found {
+			elements[i].Status = 1
+		}
+	}
+	return elements
+}
+
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
 	for i := len(elements) - 1; i >= 0; i-- {
@@ -332,6 +349,7 @@ func main() {
 			news[0] = append(news[0], news[12]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
+			news[0] = ActiveElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
@@ -360,6 +378,7 @@ func main() {
 			news[0] = append(news[0], news[8]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
+			news[0] = ActiveElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
@@ -388,6 +407,7 @@ func main() {
 			news[0] = append(news[0], news[8]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
+			news[0] = ActiveElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
@@ -408,6 +428,7 @@ func main() {
 			news[0] = append(news[0], news[4]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
+			news[0] = ActiveElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
