@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
@@ -171,10 +172,15 @@ func LoadRSS(tag string, url string) []RssItem {
 		}
 
 		title := html.UnescapeString(p.Sanitize(item.Title))
-		title = strings.TrimSpace(strings.Replace(title, " ", " ", -1))
+		title = strings.Map(func(r rune) rune {
+			if unicode.IsSpace(r) {
+				return -1
+			}
+			return r
+		}, title)
 
 		h := fnv.New32a()
-		h.Write([]byte(item.Title))
+		h.Write([]byte(title))
 		hashnum := h.Sum32()
 
 		link, originLink := GetURL(item.Link)
