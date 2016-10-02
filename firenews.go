@@ -23,6 +23,7 @@ const dateTimeFormat0 = "2006-01-02T15:04:05Z07:00"
 const dateTimeFormat1 = "Mon, 02 Jan 2006 15:04:05 -0700"
 
 var newsSource = map[string]string{
+	"twreporter.org":         "報導者",
 	"chinatimes.com":         "中時電子報",
 	"ettoday.net":            "ETtoday",
 	"tvbs.com.tw":            "TVBS",
@@ -109,6 +110,7 @@ var newsSource = map[string]string{
 	"pixnet.net":             "痞客邦",
 	"ptt.cc":                 "PTT",
 	"xn--4gq171p.com":        "一頁新聞",
+	"taiwandaily.net":        "美洲台灣日報",
 }
 
 var blockedSource = map[string]bool{
@@ -127,6 +129,7 @@ var blockedSource = map[string]bool{
 	"ptt.cc":             true,
 	"xn--4gq171p.com":    true,
 	"cna.com.tw":         true,
+	"taiwandaily.net":    true,
 }
 
 // RssItem struct
