@@ -334,7 +334,7 @@ func main() {
 			news[10] = LoadRSS("自由時報國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fworld.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
 			news[11] = LoadRSS("聯合新聞國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Finternational.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
 			news[12] = LoadRSS("中國時報國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr%7C%E5%BB%B6%E7%87%92")
-			nwws[13] = LoadRSS("PCHome新聞社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.pchome.com.tw%2Frss%2F002&include=%E6%B6%88%E9%98%B2%7C%E6%95%91%E8%AD%B7%7C%E5%BB%B6%E7%87%92%7C%E5%A4%A7%E7%81%AB%7C%E9%80%81%E9%86%AB%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7Ccpr")
+			news[13] = LoadRSS("PCHome新聞社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.pchome.com.tw%2Frss%2F002&include=%E6%B6%88%E9%98%B2%7C%E6%95%91%E8%AD%B7%7C%E5%BB%B6%E7%87%92%7C%E5%A4%A7%E7%81%AB%7C%E9%80%81%E9%86%AB%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7Ccpr")
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
