@@ -117,8 +117,6 @@ var blockedSource = map[string]bool{
 	"bltv.tv":            true,
 	"sina.com.tw":        true,
 	"epochtimes.com":     true,
-	"tw.on.cc":           true,
-	"hinet.net":          true,
 	"walkerland.com.tw":  true,
 	"tsna.com.tw":        true,
 	"pacificnews.com.tw": true,
@@ -274,10 +272,36 @@ func UinqueElements(elements []RssItem) []RssItem {
 	return elements[:len(tmp)]
 }
 
+func titleIsActived(title string, andMode bool) bool {
+	var found = false
+	const keywordLength = 2
+	keywordList := [keywordLength]string{
+		"消防",
+		"竹市",
+	}
+
+	for i := 0; i < keywordLength; i++ {
+		if strings.Contains(title, keywordList[i]) {
+			found = true
+			if !andMode {
+				break
+			}
+		} else {
+			if andMode {
+				found = false
+			}
+		}
+	}
+
+	return found
+}
+
 // ActiveElements active elements
 func ActiveElements(elements []RssItem) []RssItem {
 	for i, item := range elements {
 		if _, found := activedSource[item.Keyword]; found {
+			elements[i].Status = 1
+		} else if titleIsActived(item.Title, true) {
 			elements[i].Status = 1
 		}
 	}
