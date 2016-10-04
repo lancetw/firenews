@@ -276,7 +276,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 }
 
 func titleIsActived(title string, andMode bool) bool {
-	var found = false
+	var found = 0
 	const keywordLength = 2
 	keywordList := [keywordLength]string{
 		"消防",
@@ -285,18 +285,22 @@ func titleIsActived(title string, andMode bool) bool {
 
 	for i := 0; i < keywordLength; i++ {
 		if strings.Contains(title, keywordList[i]) {
-			found = true
+			found = found + 1
 			if !andMode {
 				break
 			}
 		} else {
 			if andMode {
-				found = false
+				found = found - 1
 			}
 		}
 	}
 
-	return found
+	if found == keywordLength {
+		return true
+	}
+
+	return false
 }
 
 // ActiveElements active elements
