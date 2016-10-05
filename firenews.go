@@ -297,8 +297,14 @@ func titleIsActived(title string, andMode bool) bool {
 		}
 	}
 
-	if found == keywordLength {
-		return true
+	if andMode {
+		if found == keywordLength {
+			return true
+		}
+	} else {
+		if found > 0 {
+			return true
+		}
 	}
 
 	return false
