@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
@@ -181,14 +182,6 @@ func LoadRSS(tag string, url string) []RssItem {
 		}
 
 		title := html.UnescapeString(p.Sanitize(item.Title))
-		/*
-			title = strings.Map(func(r rune) rune {
-				if unicode.IsSpace(r) {
-					return -1
-				}
-				return r
-			}, title)
-		*/
 
 		h := fnv.New32a()
 		h.Write([]byte(title))
@@ -266,6 +259,13 @@ func GetURL(str string) (string, string) {
 func UinqueElements(elements []RssItem) []RssItem {
 	tmp := make(map[string]RssItem, 0)
 	for _, ele := range elements {
+		ele.Title = strings.Map(func(r rune) rune {
+			if unicode.IsSpace(r) {
+				return -1
+			}
+			return r
+		}, ele.Title)
+
 		tmp[ele.Title+ele.Source] = ele
 	}
 	var i int
