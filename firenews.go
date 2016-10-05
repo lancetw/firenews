@@ -266,7 +266,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 			return r
 		}, ele.Title)
 
-		tmp[ele.Title+ele.Source] = ele
+		tmp[ele.Title] = ele
 	}
 	var i int
 	for _, ele := range tmp {
