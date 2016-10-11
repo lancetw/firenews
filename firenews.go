@@ -505,6 +505,7 @@ func main() {
 			news[0] = append(news[0], news[10]...)
 			news[0] = append(news[0], news[11]...)
 			news[0] = append(news[0], news[12]...)
+			news[0] = append(news[0], news[13]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveElements(news[0])
