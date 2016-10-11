@@ -482,7 +482,7 @@ func main() {
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[3] = LoadRSS("中央社（記者魯鋼駿）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
-			news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
+			//news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			//news[5] = LoadRSS("真晨報-搜尋竹市、消防等關鍵字（記者王萱）", "")
 			//news[6] = LoadRSS("臺灣時報（記者鄭銘德）", "")
 			news[7] = LoadRSS("ETtoday（新竹振道記者蔡文綺、記者萬世璉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
