@@ -479,7 +479,7 @@ func main() {
 		v1.GET("/hcfd", func(c *gin.Context) {
 			var news [12]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
-			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fcentral.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
+			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[3] = LoadRSS("中央社（記者魯鋼駿）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
