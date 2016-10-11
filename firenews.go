@@ -22,6 +22,7 @@ import (
 const timeZone = "Asia/Taipei"
 const dateTimeFormat0 = "2006-01-02T15:04:05Z07:00"
 const dateTimeFormat1 = "Mon, 02 Jan 2006 15:04:05 -0700"
+const dateTimeFormat2 = "Mon, 02 Jan 2006 15:04:05 GMT"
 
 var newsSource = map[string]string{
 	"5550555.com":            "真晨報",
@@ -176,8 +177,12 @@ func LoadRSS(tag string, url string) []RssItem {
 	for _, item := range feed.Items {
 		local, dateTimeErr := time.Parse(dateTimeFormat0, item.Published)
 		if dateTimeErr != nil {
-			local, _ = time.Parse(dateTimeFormat1, item.Published)
+			local, dateTimeErr = time.Parse(dateTimeFormat1, item.Published)
 		}
+		if dateTimeErr != nil {
+			local, _ = time.Parse(dateTimeFormat2, item.Published)
+		}
+
 		location, err := time.LoadLocation(timeZone)
 		if err == nil {
 			local = local.In(location)
