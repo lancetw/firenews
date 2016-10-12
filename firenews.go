@@ -23,11 +23,15 @@ const timeZone = "Asia/Taipei"
 const dateTimeFormat0 = "2006-01-02T15:04:05Z07:00"
 const dateTimeFormat1 = "Mon, 02 Jan 2006 15:04:05 -0700"
 const dateTimeFormat2 = "Mon, 02 Jan 2006 15:04:05 GMT"
-const dateTimeFormat3 = "2016-01-02 15:04:05"
+const dateTimeFormat3 = "2006-01-02 15:04:05"
+const dateTimeFormat4 = "Mon,02 Jan 2006 15:04:05  -0700"
+const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
+const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
 
 var newsSource = map[string]string{
 	"5550555.com":            "真晨報",
 	"twpowernews.com":        "勁報",
+	"twnewsdaily.com":        "台灣新聞報",
 	"twreporter.org":         "報導者",
 	"mypeople.tw":            "民眾日報",
 	"chinatimes.com":         "中時電子報",
@@ -187,7 +191,16 @@ func LoadRSS(tag string, url string) []RssItem {
 			local, dateTimeErr = time.Parse(dateTimeFormat3, item.Published)
 		}
 		if dateTimeErr != nil {
-			fmt.Printf("Failed parse dateTime: %v\n", item)
+			local, dateTimeErr = time.Parse(dateTimeFormat4, item.Published)
+		}
+		if dateTimeErr != nil {
+			local, dateTimeErr = time.Parse(dateTimeFormat5, item.Published)
+		}
+		if dateTimeErr != nil {
+			local, dateTimeErr = time.Parse(dateTimeFormat6, item.Published)
+		}
+		if dateTimeErr != nil {
+			fmt.Printf("Failed parse dateTime: %v, %v, %v\n", item.Published, item.Title, item.Link)
 		}
 
 		location, err := time.LoadLocation(timeZone)
@@ -201,6 +214,9 @@ func LoadRSS(tag string, url string) []RssItem {
 		h.Write([]byte(title))
 		hashnum := h.Sum32()
 
+		if strings.HasPrefix(item.Link, "news_pagein.php?") {
+			item.Link = "http://www.twnewsdaily.com/home/" + item.Link
+		}
 		link, originLink := GetURL(item.Link)
 		source, keyword := GetNewsSource(item.Link)
 
@@ -498,14 +514,14 @@ func main() {
 			})
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
-			var news [15]([]RssItem)
+			var news [14]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[3] = LoadRSS("中央社（記者魯鋼駿）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			//news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[5] = LoadRSS("真晨報（記者王萱）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2F5550555&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
-			//news[6] = LoadRSS("臺灣時報（記者鄭銘德）", "")
+			news[6] = LoadRSS("臺灣時報（記者鄭銘德）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwtimesrss&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[7] = LoadRSS("ETtoday（新竹振道記者蔡文綺、記者萬世璉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[8] = LoadRSS("民眾日報（記者方詠騰）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[9] = LoadRSS("青年日報（記者余華昌）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.gpwb.gov.tw%2FRss%2F77&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
@@ -527,7 +543,6 @@ func main() {
 			news[0] = append(news[0], news[11]...)
 			news[0] = append(news[0], news[12]...)
 			news[0] = append(news[0], news[13]...)
-			news[0] = append(news[0], news[14]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveAllElements(news[0])
