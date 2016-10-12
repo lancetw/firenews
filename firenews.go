@@ -329,6 +329,14 @@ func ActiveElements(elements []RssItem) []RssItem {
 	return elements
 }
 
+// ActiveAllElements active elements
+func ActiveAllElements(elements []RssItem) []RssItem {
+	for i := range elements {
+		elements[i].Status = 1
+	}
+	return elements
+}
+
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
 	for i := len(elements) - 1; i >= 0; i-- {
@@ -515,7 +523,7 @@ func main() {
 			news[0] = append(news[0], news[14]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
-			news[0] = ActiveElements(news[0])
+			news[0] = ActiveAllElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
 			c.JSON(200, gin.H{
