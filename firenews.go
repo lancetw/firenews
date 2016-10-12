@@ -29,98 +29,102 @@ const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
 const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
 
 var newsSource = map[string]string{
-	"5550555.com":            "真晨報",
-	"twpowernews.com":        "勁報",
-	"twnewsdaily.com":        "台灣新聞報",
-	"twreporter.org":         "報導者",
-	"mypeople.tw":            "民眾日報",
-	"chinatimes.com":         "中時電子報",
-	"ettoday.net":            "ETtoday",
-	"tvbs.com.tw":            "TVBS",
-	"appledaily.com.tw":      "蘋果日報",
-	"ftv.com.tw":             "民視新聞",
-	"ltn.com.tw":             "自由時報電子報",
-	"udn.com":                "聯合新聞網",
-	"ebc.net.tw":             "東森新聞",
-	"setn.com":               "三立新聞網",
-	"pts.org.tw":             "公視新聞",
-	"nownews.com":            "NOWnews",
-	"mdnkids.com":            "國語日報",
-	"cna.com.tw":             "中央通訊社",
-	"hinet.net":              "HiNet新聞",
-	"storm.mg":               "風傳媒",
-	"ttv.com.tw":             "台視新聞",
-	"cts.com.tw":             "華視新聞",
-	"ithome.com.tw":          "iThome Online",
-	"eradio.ner.gov.tw":      "國立教育廣播電台",
-	"mradio.com.tw":          "全國廣播",
-	"musou.tw":               "沃草國會無雙",
-	"anntw.com":              "台灣醒報",
-	"thenewslens.com":        "The News Lens關鍵評論網",
-	"coolloud.org.tw":        "苦勞網",
-	"yam.com":                "蕃新聞",
-	"taiwanhot.net":          "台灣好新聞",
-	"knowing.asia":           "Knowing",
-	"101newsmedia.com":       "一零一傳媒",
-	"peopo.org":              "公民新聞",
-	"gpwb.gov.tw":            "軍事新聞網",
-	"ipcf.org.tw":            "原住民族電視台",
-	"ntdtv.com.tw":           "新唐人亞太電視台",
-	"cnyes.com":              "鉅亨網",
-	"epochtimes.com":         "大紀元",
-	"bltv.tv":                "人間衛視",
-	"merit-times.com.tw":     "人間福報",
-	"tw.on.cc":               "on.cc東網台灣",
-	"sina.com.tw":            "臺灣新浪網",
-	"ntdtv.com":              "NTDTV",
-	"ctitv.com.tw":           "必POTV",
-	"travelnews.tw":          "宜蘭新聞網",
-	"chinesetoday.com":       "國際日報",
-	"gamebase.com.tw":        "遊戲基地",
-	"soundofhope.org":        "希望之聲",
-	"cdnews.com.tw":          "中央日報",
-	"idn.com.tw":             "自立晚報",
-	"rti.org.tw":             "中央廣播電台",
-	"times-bignews.com":      "今日大話新聞",
-	"saydigi.com":            "SayDigi點子生活",
-	"e-info.org.tw":          "環境資訊中心",
-	"tanews.org.tw":          "台灣動物新聞網",
-	"eventsinfocus.org":      "焦點事件",
-	"cmmedia.com.tw":         "信傳媒",
-	"civilmedia.tw":          "公民行動影音紀錄資料庫",
-	"tw.iscarmg.com":         "iscar!",
-	"hk.news.yahoo.com":      "Yahoo香港",
-	"hk.apple.nextmedia.com": "香港蘋果日報",
-	"cdn.org.tw":             "基督教今日報",
-	"kairos.news":            "Kairos風向新聞",
-	"gov.taipei":             "臺北市政府",
-	"yunlin.gov.tw":          "雲林縣政府",
-	"taichung.gov.tw":        "臺中市政府",
-	"taitung.gov.tw":         "臺東縣政府",
-	"hccg.gov.tw":            "新竹市政府",
-	"fat.com.tw":             "遠東航空",
-	"ctust.edu.tw":           "中臺科技大學",
-	"msn.com":                "msn新聞",
-	"newtalk.tw":             "新頭殼",
-	"cnabc.com":              "中央通訊社",
-	"ey.gov.tw":              "行政院全球資訊網",
-	"walkerland.com.tw":      "Walkerland",
-	"tsna.com.tw":            "tsna",
-	"voacantonese.com":       "美國之音",
-	"ct.org.tw":              "基督教論壇報",
-	"pacificnews.com.tw":     "太平洋新聞網",
-	"housefun.com.tw":        "好房網",
-	"msntw.com":              "主流傳媒",
-	"kinmen.gov.tw":          "金門縣政府",
-	"chiayi.gov.tw":          "嘉義市政府",
-	"ccu.edu.tw":             "國立中正大學",
-	"npa.gov.tw":             "內政部警政署",
-	"tainan.gov.tw":          "台南市政府",
-	"match.net.tw":           "match生活網",
-	"pixnet.net":             "痞客邦",
-	"ptt.cc":                 "PTT",
-	"xn--4gq171p.com":        "一頁新聞",
-	"taiwandaily.net":        "美洲台灣日報",
+	"5550555.com":                     "真晨報",
+	"twpowernews.com":                 "勁報",
+	"twnewsdaily.com":                 "台灣新聞報",
+	"twtimes.com.tw":                  "台灣時報",
+	"twreporter.org":                  "報導者",
+	"mypeople.tw":                     "民眾日報",
+	"chinatimes.com":                  "中時電子報",
+	"ettoday.net":                     "ETtoday",
+	"feedproxy.google.com/~r/ettoday": "ETtoday",
+	"tvbs.com.tw":                     "TVBS",
+	"appledaily.com.tw":               "蘋果日報",
+	"ftv.com.tw":                      "民視新聞",
+	"ltn.com.tw":                      "自由時報電子報",
+	"udn.com":                         "聯合新聞網",
+	"ebc.net.tw":                      "東森新聞",
+	"setn.com":                        "三立新聞網",
+	"pts.org.tw":                      "公視新聞",
+	"nownews.com":                     "NOWnews",
+	"mdnkids.com":                     "國語日報",
+	"cna.com.tw":                      "中央通訊社",
+	"feedproxy.google.com/~r/rsscna":  "中央通訊社",
+	"hinet.net":                       "HiNet新聞",
+	"storm.mg":                        "風傳媒",
+	"ttv.com.tw":                      "台視新聞",
+	"cts.com.tw":                      "華視新聞",
+	"ithome.com.tw":                   "iThome Online",
+	"eradio.ner.gov.tw":               "國立教育廣播電台",
+	"mradio.com.tw":                   "全國廣播",
+	"musou.tw":                        "沃草國會無雙",
+	"anntw.com":                       "台灣醒報",
+	"thenewslens.com":                 "The News Lens關鍵評論網",
+	"coolloud.org.tw":                 "苦勞網",
+	"yam.com":                         "蕃新聞",
+	"taiwanhot.net":                   "台灣好新聞",
+	"knowing.asia":                    "Knowing",
+	"101newsmedia.com":                "一零一傳媒",
+	"peopo.org":                       "公民新聞",
+	"gpwb.gov.tw":                     "青年日報",
+	"ipcf.org.tw":                     "原住民族電視台",
+	"ntdtv.com.tw":                    "新唐人亞太電視台",
+	"cnyes.com":                       "鉅亨網",
+	"epochtimes.com":                  "大紀元",
+	"bltv.tv":                         "人間衛視",
+	"merit-times.com.tw":              "人間福報",
+	"tw.on.cc":                        "on.cc東網台灣",
+	"sina.com.tw":                     "臺灣新浪網",
+	"ntdtv.com":                       "NTDTV",
+	"ctitv.com.tw":                    "必POTV",
+	"travelnews.tw":                   "宜蘭新聞網",
+	"chinesetoday.com":                "國際日報",
+	"gamebase.com.tw":                 "遊戲基地",
+	"soundofhope.org":                 "希望之聲",
+	"cdnews.com.tw":                   "中央日報",
+	"idn.com.tw":                      "自立晚報",
+	"rti.org.tw":                      "中央廣播電台",
+	"times-bignews.com":               "今日大話新聞",
+	"saydigi.com":                     "SayDigi點子生活",
+	"e-info.org.tw":                   "環境資訊中心",
+	"tanews.org.tw":                   "台灣動物新聞網",
+	"eventsinfocus.org":               "焦點事件",
+	"cmmedia.com.tw":                  "信傳媒",
+	"civilmedia.tw":                   "公民行動影音紀錄資料庫",
+	"tw.iscarmg.com":                  "iscar!",
+	"hk.news.yahoo.com":               "Yahoo香港",
+	"hk.apple.nextmedia.com":          "香港蘋果日報",
+	"cdn.org.tw":                      "基督教今日報",
+	"kairos.news":                     "Kairos風向新聞",
+	"gov.taipei":                      "臺北市政府",
+	"yunlin.gov.tw":                   "雲林縣政府",
+	"taichung.gov.tw":                 "臺中市政府",
+	"taitung.gov.tw":                  "臺東縣政府",
+	"hccg.gov.tw":                     "新竹市政府",
+	"fat.com.tw":                      "遠東航空",
+	"ctust.edu.tw":                    "中臺科技大學",
+	"msn.com":                         "msn新聞",
+	"newtalk.tw":                      "新頭殼",
+	"cnabc.com":                       "中央通訊社",
+	"ey.gov.tw":                       "行政院全球資訊網",
+	"walkerland.com.tw":               "Walkerland",
+	"tsna.com.tw":                     "tsna",
+	"voacantonese.com":                "美國之音",
+	"ct.org.tw":                       "基督教論壇報",
+	"pacificnews.com.tw":              "太平洋新聞網",
+	"housefun.com.tw":                 "好房網",
+	"msntw.com":                       "主流傳媒",
+	"kinmen.gov.tw":                   "金門縣政府",
+	"chiayi.gov.tw":                   "嘉義市政府",
+	"ccu.edu.tw":                      "國立中正大學",
+	"npa.gov.tw":                      "內政部警政署",
+	"tainan.gov.tw":                   "台南市政府",
+	"match.net.tw":                    "match生活網",
+	"pixnet.net":                      "痞客邦",
+	"ptt.cc":                          "PTT",
+	"xn--4gq171p.com":                 "一頁新聞",
+	"taiwandaily.net":                 "美洲台灣日報",
+	"koreastardaily.com":              "韓星網",
 }
 
 var blockedSource = map[string]bool{
@@ -137,6 +141,7 @@ var blockedSource = map[string]bool{
 	"ptt.cc":             true,
 	"xn--4gq171p.com":    true,
 	"taiwandaily.net":    true,
+	"koreastardaily.com": true,
 }
 
 var activedSource = map[string]bool{
@@ -180,6 +185,19 @@ func LoadRSS(tag string, url string) []RssItem {
 	}
 
 	for _, item := range feed.Items {
+		if item.Published == "" {
+			if item.Extensions != nil {
+				for _, extension := range item.Extensions {
+					if ext, ok := extension["updated"]; ok {
+						_ext := ext[0]
+						if _ext.Name == "updated" {
+							item.Published = _ext.Value
+						}
+					}
+				}
+			}
+		}
+
 		local, dateTimeErr := time.Parse(dateTimeFormat0, item.Published)
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat1, item.Published)
@@ -199,8 +217,9 @@ func LoadRSS(tag string, url string) []RssItem {
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat6, item.Published)
 		}
+
 		if dateTimeErr != nil {
-			fmt.Printf("Failed parse dateTime: %v, %v, %v\n", item.Published, item.Title, item.Link)
+			fmt.Printf("Failed parse dateTime: %v\n", item.Published)
 		}
 
 		location, err := time.LoadLocation(timeZone)
@@ -214,9 +233,15 @@ func LoadRSS(tag string, url string) []RssItem {
 		h.Write([]byte(title))
 		hashnum := h.Sum32()
 
+		// fix wrong link
 		if strings.HasPrefix(item.Link, "news_pagein.php?") {
 			item.Link = "http://www.twnewsdaily.com/home/" + item.Link
 		}
+
+		if strings.HasSuffix(item.Link, "//") {
+			item.Link = strings.TrimSuffix(item.Link, "/")
+		}
+
 		link, originLink := GetURL(item.Link)
 		source, keyword := GetNewsSource(item.Link)
 
@@ -296,7 +321,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 			return r
 		}, ele.Title)
 
-		tmp[ele.Title] = ele
+		tmp[ele.Title+ele.Source] = ele
 	}
 	var i int
 	for _, ele := range tmp {
@@ -519,11 +544,13 @@ func main() {
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[3] = LoadRSS("中央社（記者魯鋼駿）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
-			//news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
+			/* 勁報已有在 Google 快訊的 Hinet 來源 */
+			news[4] = LoadRSS("勁報（勁報記者羅蔚舟）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ftwpowernews.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[5] = LoadRSS("真晨報（記者王萱）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2F5550555&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[6] = LoadRSS("臺灣時報（記者鄭銘德）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwtimesrss&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[7] = LoadRSS("ETtoday（新竹振道記者蔡文綺、記者萬世璉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[8] = LoadRSS("民眾日報（記者方詠騰）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
+			/* 青年日報已有在 Google 快訊的 軍事新聞網 來源 */
 			news[9] = LoadRSS("青年日報（記者余華昌）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.gpwb.gov.tw%2FRss%2F77&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[10] = LoadRSS("台灣新聞報（記者戴欣怡）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.twnewsdaily.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[11] = LoadRSS("Google 快訊 竹市", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
