@@ -559,7 +559,7 @@ func main() {
 			news[10] = LoadRSS("台灣新聞報（記者戴欣怡）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.twnewsdaily.com%2Fhome%2Frss.php&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[11] = LoadRSS("Google 快訊 竹市", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 			news[12] = LoadRSS("Google 快訊 新竹市消防局", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F1414805763936394095&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
-			news[13] = LoadRSS("Google 快訊 竹市 消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/262575485178737034")
+			news[13] = LoadRSS("Google 快訊 消防||火燒||火警||火災||大火", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10937227332545439003&include=%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82")
 
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
