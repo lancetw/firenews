@@ -29,6 +29,7 @@ const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
 const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
 
 var newsSource = map[string]string{
+	"tssdnews.com.tw":                 "台灣新生報",
 	"fingermedia.tw":                  "指傳媒",
 	"5550555.com":                     "真晨報",
 	"twpowernews.com":                 "勁報",
@@ -554,7 +555,7 @@ func main() {
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
 			includeText := "%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E8%AD%A6%E5%A0%B1%E5%99%A8%7C%E8%AD%A6%E5%A0%B1%E5%99%A8.%2A%E7%AB%B9%E5%B8%82"
-			var news [16]([]RssItem)
+			var news [17]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include="+includeText)
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
@@ -573,6 +574,7 @@ func main() {
 			news[13] = LoadRSS("Google 快訊 消防||火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10937227332545439003&include="+includeText)
 			news[14] = LoadRSS("指傳媒", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2&include="+includeText)
 			news[15] = LoadRSS("台灣好報 地方新聞", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fnewstaiwan&include="+includeText)
+			news[16] = LoadRSS("台灣新生報 地方綜合", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
@@ -588,6 +590,7 @@ func main() {
 			news[0] = append(news[0], news[13]...)
 			news[0] = append(news[0], news[14]...)
 			news[0] = append(news[0], news[15]...)
+			news[0] = append(news[0], news[16]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveAllElements(news[0])
