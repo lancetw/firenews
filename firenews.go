@@ -134,6 +134,10 @@ var newsSource = map[string]string{
 	"qoos.com":                        "Qoos",
 	"wenweipo.com":                    "文匯報",
 	"hk.on.cc":                        "東網即時",
+	"chinapress.com.my":               "China Press",
+	"now.com":                         "now新聞",
+	"singtao.ca":                      "星島日報",
+	"moi.gov.tw":                      "中華民國內政部",
 }
 
 var blockedSource = map[string]bool{
