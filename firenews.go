@@ -491,7 +491,7 @@ func main() {
 			var news [10]([]RssItem)
 			news[0] = LoadRSS("竹市", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2705564241123909653")
 			news[1] = LoadRSS("中國時報地方版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=%E7%AB%B9%E5%B8%82")
-			news[2] = LoadRSS("聯合新聞地方桃竹苗版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flocal_tyhcml.xml&include=%E7%AB%B9%E5%B8%82")
+			news[2] = LoadRSS("聯合新聞地方桃竹苗版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include=%E7%AB%B9%E5%B8%82")
 			news[3] = LoadRSS("自由時報地方版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flocal.xml&include=%E7%AB%B9%E5%B8%82")
 			news[4] = LoadRSS("蘋果日報地方綜合", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F1076&include=%E7%AB%B9%E5%B8%82")
 			news[5] = LoadRSS("中國時報社會版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include=%E7%AB%B9%E5%B8%82")
