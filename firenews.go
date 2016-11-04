@@ -27,6 +27,7 @@ const dateTimeFormat3 = "2006-01-02 15:04:05"
 const dateTimeFormat4 = "Mon,02 Jan 2006 15:04:05  -0700"
 const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
 const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
+const dateTimeFormat7 = "Mon, 2 Jan 2006 15:04:05 GMT"
 
 var newsSource = map[string]string{
 	"tssdnews.com.tw":                 "台灣新生報",
@@ -246,6 +247,9 @@ func LoadRSS(tag string, url string) []RssItem {
 		}
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat6, item.Published)
+		}
+		if dateTimeErr != nil {
+			local, dateTimeErr = time.Parse(dateTimeFormat7, item.Published)
 		}
 
 		if dateTimeErr != nil {
