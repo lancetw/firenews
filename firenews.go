@@ -595,7 +595,7 @@ func main() {
 			news[16] = LoadRSS("台灣好報 地方新聞", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fnewstaiwan&include="+includeText)
 			news[17] = LoadRSS("台灣新生報 地方綜合", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[18] = LoadRSS("天眼日報 警消新聞", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include="+includeText)
-			news[19] = LoadRSS("新竹市政府", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText)
+			//news[19] = LoadRSS("新竹市政府", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText)
 			news[20] = LoadRSS("大成報（蕃新聞）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
