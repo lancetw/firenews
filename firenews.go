@@ -31,6 +31,7 @@ const dateTimeFormat7 = "Mon, 2 Jan 2006 15:04:05 GMT"
 
 var newsSource = map[string]string{
 	"twpowernews.com":                 "勁報",
+	"www.cdns.com.tw":                 "中華日報",
 	"tssdnews.com.tw":                 "台灣新生報",
 	"tynews.com.tw":                   "天眼日報",
 	"fingermedia.tw":                  "指傳媒",
@@ -624,6 +625,7 @@ func main() {
 			news[0] = append(news[0], news[21]...)
 			news[0] = append(news[0], news[22]...)
 			news[0] = append(news[0], news[23]...)
+			news[0] = append(news[0], news[24]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveAllElements(news[0])
