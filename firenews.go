@@ -233,9 +233,6 @@ func LoadRSS(tag string, url string) []RssItem {
 		}
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat2, item.Published)
-			if dateTimeErr == nil {
-				local, dateTimeErr = time.ParseInLocation(dateTimeFormat2, item.Published, location)
-			}
 		}
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat3, item.Published)
