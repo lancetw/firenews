@@ -31,6 +31,7 @@ const dateTimeFormat7 = "Mon, 2 Jan 2006 15:04:05 GMT"
 
 var newsSource = map[string]string{
 	"twpowernews.com":                 "勁報",
+	"greatnews.com.tw":                "大成報",
 	"www.cdns.com.tw":                 "中華日報",
 	"tssdnews.com.tw":                 "台灣新生報",
 	"tynews.com.tw":                   "天眼日報",
@@ -269,7 +270,14 @@ func LoadRSS(tag string, url string) []RssItem {
 
 		// fix wrong link
 		if strings.HasPrefix(item.Link, "news_pagein.php?") {
-			item.Link = "http://www.twpowernews.com/home/" + item.Link
+			switch tag {
+			case "大成報":
+				item.Link = "http://www.greatnews.com.tw/home/" + item.Link
+			case "勁報（勁報記者羅蔚舟）":
+				item.Link = "http://www.twpowernews.com.tw/home/" + item.Link
+			case "台灣新聞報（記者戴欣怡）":
+				item.Link = "twnewsdaily.com/home/" + item.Link
+			}
 		}
 
 		if strings.HasSuffix(item.Link, "//") {
@@ -574,7 +582,7 @@ func main() {
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
 			includeText := "%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E7%AB%B9%E5%B8%82%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E6%9E%97%E6%99%BA%E5%A0%85"
-			var news [25]([]RssItem)
+			var news [26]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
@@ -586,8 +594,8 @@ func main() {
 			news[8] = LoadRSS("臺灣時報（記者鄭銘德）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwtimesrss&include="+includeText)
 			news[9] = LoadRSS("ETtoday（新竹振道記者蔡文綺、記者萬世璉）", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include="+includeText)
 			news[10] = LoadRSS("民眾日報（記者方詠騰）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss&include="+includeText)
-			news[11] = LoadRSS("青年日報（記者余華昌）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.gpwb.gov.tw%2FRss%2F77&include="+includeText)
-			//news[12] = LoadRSS("台灣新聞報（記者戴欣怡）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.twnewsdaily.com%2Fhome%2Frss.php&include="+includeText)
+			news[11] = LoadRSS("青年日報（記者余華昌）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fnews.gpwb.gov.tw%2FRss%2F37&include="+includeText)
+			news[12] = LoadRSS("台灣新聞報（記者戴欣怡）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.twnewsdaily.com%2Fhome%2Frss.php&include="+includeText)
 			news[13] = LoadRSS("Google 快訊 竹市", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include="+includeText)
 			news[14] = LoadRSS("Google 快訊 竹市消防局", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F7890686135979287740&include="+includeText)
 			news[16] = LoadRSS("Google 快訊 消防||火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器", "https://feed.janicek.co/filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10937227332545439003&include="+includeText)
@@ -596,9 +604,10 @@ func main() {
 			news[19] = LoadRSS("台灣新生報 地方綜合", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[20] = LoadRSS("天眼日報 警消新聞", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include="+includeText)
 			//news[21] = LoadRSS("新竹市政府", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText)
-			news[22] = LoadRSS("大成報（蕃新聞）", "https://feed.janicek.co/filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
+			news[22] = LoadRSS("大成報", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.greatnews.com.tw%2Fhome%2Frss.php&include="+includeText)
 			news[23] = LoadRSS("聯合新聞地方桃竹苗版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include="+includeText)
 			news[24] = LoadRSS("中華新聞網", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fcdns&include="+includeText)
+			//news[25] = LoadRSS("蕃新聞", "https://feed.janicek.co/filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
@@ -619,10 +628,11 @@ func main() {
 			news[0] = append(news[0], news[18]...)
 			news[0] = append(news[0], news[19]...)
 			news[0] = append(news[0], news[20]...)
-			news[0] = append(news[0], news[21]...)
+			//news[0] = append(news[0], news[21]...)
 			news[0] = append(news[0], news[22]...)
 			news[0] = append(news[0], news[23]...)
 			news[0] = append(news[0], news[24]...)
+			//news[0] = append(news[0], news[25]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveAllElements(news[0])
