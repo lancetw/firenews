@@ -463,7 +463,7 @@ func main() {
 	v1 := router.Group("/api/news/v1")
 	{
 		v1.GET("/main", func(c *gin.Context) {
-			var news [14]([]RssItem)
+			var news [15]([]RssItem)
 			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439003")
 			news[1] = LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
 			news[2] = LoadRSS("火災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2277690879891404912")
@@ -478,6 +478,7 @@ func main() {
 			news[11] = LoadRSS("聯合新聞國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2FBREAKINGNEWS4.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr")
 			news[12] = LoadRSS("中國時報國際版", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include=%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr")
 			news[13] = LoadRSS("民眾日報", "https://feed.janicek.co/filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include=%E6%B6%88%E9%98%B2")
+			news[14] = LoadRSS("台灣新生報 地方綜合", "https://feed.janicek.co/filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include=%E6%B6%88%E9%98%B2")
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
