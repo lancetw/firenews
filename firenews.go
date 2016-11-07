@@ -276,7 +276,7 @@ func LoadRSS(tag string, url string) []RssItem {
 			case "勁報（勁報記者羅蔚舟）":
 				item.Link = "http://www.twpowernews.com.tw/home/" + item.Link
 			case "台灣新聞報（記者戴欣怡）":
-				item.Link = "twnewsdaily.com/home/" + item.Link
+				item.Link = "http://twnewsdaily.com/home/" + item.Link
 			}
 		}
 
