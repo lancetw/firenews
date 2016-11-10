@@ -452,7 +452,7 @@ func CleanupElements(elements []RssItem) []RssItem {
 func main() {
 	var filterAPIPoint string
 	if os.Getenv("GIN_MODE") == "release" {
-		filterAPIPoint = "api/util/v1/"
+		filterAPIPoint = "http://52.198.78.110/firenews/api/util/v1/"
 	} else {
 		filterAPIPoint = "http://localhost:1234/api/util/v1/"
 	}
