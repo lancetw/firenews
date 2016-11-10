@@ -238,19 +238,6 @@ func LoadRSS(tag string, url string) []RssItem {
 	location, err := time.LoadLocation(timeZone)
 
 	for _, item := range feed.Items {
-		if item.Published == "" {
-			if item.Extensions != nil {
-				for _, extension := range item.Extensions {
-					if ext, ok := extension["updated"]; ok {
-						_ext := ext[0]
-						if _ext.Name == "updated" {
-							item.Published = _ext.Value
-						}
-					}
-				}
-			}
-		}
-
 		local, dateTimeErr := time.Parse(dateTimeFormat0, item.Published)
 		if dateTimeErr != nil {
 			local, dateTimeErr = time.Parse(dateTimeFormat1, item.Published)
