@@ -19,7 +19,6 @@ import (
 	"github.com/itsjamie/gin-cors"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
-	"golang.org/x/text/unicode/norm"
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/urlshortener/v1"
 )
@@ -437,6 +436,14 @@ func CleanupElements(elements []RssItem) []RssItem {
 	return elements
 }
 
+// CJKnorm fixed ambiguous cjk text
+func CJKnorm(s string) string {
+	var str string
+	str = strings.Replace(s, "巿", "市", -1)
+
+	return str
+}
+
 func main() {
 	var filterAPIPoint string
 	if os.Getenv("GIN_MODE") == "release" {
@@ -478,9 +485,9 @@ func main() {
 
 			rp := regexp.MustCompile(include)
 			for _, item := range feed.Items {
-				foundTitle := rp.MatchString(norm.NFD.String(item.Title))
-				foundDescription := rp.MatchString(norm.NFD.String(item.Description))
-				foundContent := rp.MatchString(norm.NFD.String(item.Content))
+				foundTitle := rp.MatchString(CJKnorm(item.Title))
+				foundDescription := rp.MatchString(CJKnorm(item.Description))
+				foundContent := rp.MatchString(CJKnorm(item.Content))
 
 				if foundTitle || foundDescription || foundContent {
 					foundItems = append(foundItems, item)
@@ -658,7 +665,7 @@ func main() {
 			})
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
-			includeText := "%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E7%AB%B9%E5%B8%82%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E6%9E%97%E6%99%BA%E5%A0%85%7C%E6%96%B0%E7%AB%B9%E5%B7%BF%E6%B6%88%E9%98%B2%E5%B1%80"
+			includeText := "%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E7%AB%B9%E5%B8%82%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E6%9E%97%E6%99%BA%E5%A0%85"
 			var news [28]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
