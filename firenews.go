@@ -474,12 +474,12 @@ func main() {
 			}
 
 			var foundItems = make([]*gofeed.Item, 0)
-
+			p := bluemonday.NewPolicy()
 			rp := regexp.MustCompile(include)
 			for _, item := range feed.Items {
-				foundTitle := rp.MatchString(item.Title)
-				foundContent := rp.MatchString(item.Content)
-				foundDescription := rp.MatchString(item.Description)
+				foundTitle := rp.MatchString(p.Sanitize(item.Title))
+				foundContent := rp.MatchString(p.Sanitize(item.Content))
+				foundDescription := rp.MatchString(p.Sanitize(item.Description))
 
 				if foundTitle || foundDescription || foundContent {
 					foundItems = append(foundItems, item)
@@ -573,7 +573,7 @@ func main() {
 		})
 		v1.GET("/city", func(c *gin.Context) {
 			var news [12]([]RssItem)
-			includeText := "%E7%AB%B9%E5%B8%82%7C%7C%E7%AB%B9%E5%B8%82%E6%B6%88%E9%98%B2%E5%B1%80"
+			includeText := "%E7%AB%B9%E5%B8%82"
 			news[0] = LoadRSS("Google 快訊 竹市||台鐵香山||香山火車站||香山站", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2705564241123909653")
 			news[1] = LoadRSS("中國時報地方版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include="+includeText)
 			news[2] = LoadRSS("聯合新聞地方桃竹苗版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include="+includeText)
