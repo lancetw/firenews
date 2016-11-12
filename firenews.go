@@ -19,6 +19,7 @@ import (
 	"github.com/itsjamie/gin-cors"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
+	"golang.org/x/text/unicode/norm"
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/urlshortener/v1"
 )
@@ -474,12 +475,12 @@ func main() {
 			}
 
 			var foundItems = make([]*gofeed.Item, 0)
-			p := bluemonday.NewPolicy()
+
 			rp := regexp.MustCompile(include)
 			for _, item := range feed.Items {
-				foundTitle := rp.MatchString(p.Sanitize(item.Title))
-				foundContent := rp.MatchString(p.Sanitize(item.Content))
-				foundDescription := rp.MatchString(p.Sanitize(item.Description))
+				foundTitle := rp.MatchString(norm.NFD.String(item.Title))
+				foundDescription := rp.MatchString(norm.NFD.String(item.Description))
+				foundContent := rp.MatchString(norm.NFD.String(item.Content))
 
 				if foundTitle || foundDescription || foundContent {
 					foundItems = append(foundItems, item)
