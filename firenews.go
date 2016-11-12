@@ -479,8 +479,9 @@ func main() {
 			for _, item := range feed.Items {
 				foundTitle := rp.MatchString(item.Title)
 				foundContent := rp.MatchString(item.Content)
+				foundDescription := rp.MatchString(item.Description)
 
-				if foundTitle || foundContent {
+				if foundTitle || foundDescription || foundContent {
 					foundItems = append(foundItems, item)
 				}
 			}
