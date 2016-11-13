@@ -211,7 +211,7 @@ func fixedLink(link string, tag string) string {
 		case "大成報":
 			link = "http://www.greatnews.com.tw/home/" + link
 		case "勁報（勁報記者羅蔚舟）":
-			link = "http://www.twpowernews.com.tw/home/" + link
+			link = "http://www.twpowernews.com/home/" + link
 		case "台灣新聞報（記者戴欣怡）":
 			link = "http://twnewsdaily.com/home/" + link
 		}
