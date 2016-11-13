@@ -272,6 +272,12 @@ func LoadRSS(tag string, url string) []RssItem {
 		switch tag {
 		case "民眾日報（記者方詠騰）":
 			local = local.Add(-14 * time.Hour)
+		case "勁報（勁報記者羅蔚舟）":
+			local = local.Add(-8 * time.Hour)
+		case "大成報":
+			local = local.Add(-8 * time.Hour)
+		case "台灣新聞報（記者戴欣怡）":
+			local = local.Add(-8 * time.Hour)
 		}
 
 		title := html.UnescapeString(p.Sanitize(item.Title))
