@@ -697,7 +697,7 @@ func main() {
 			news[25] = LoadRSS("中華新聞網", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fcdns&include="+includeText)
 			//news[26] = LoadRSS("蕃新聞", filterAPIPoint + "filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
 			news[27] = LoadRSS("蘋果日報 要聞", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include="+includeText)
-			news[28] = LoadRSS("自由時報地方版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flocal.xml&include="+includeText)
+			news[28] = LoadRSS("自由時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include="+includeText)
 			news[29] = LoadRSS("聯合新聞網 即時 地方", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
