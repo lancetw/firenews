@@ -374,8 +374,8 @@ func UinqueElements(elements []RssItem) []RssItem {
 }
 
 func titleIsActived(title string, keywords string) bool {
-	rp := regexp.MustCompile(include)
-	found := rp.MatchString(keywords)
+	rp := regexp.MustCompile(keywords)
+	found := rp.MatchString(title)
 
 	return found
 }
