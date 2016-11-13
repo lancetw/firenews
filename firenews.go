@@ -375,10 +375,11 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 func titleIsActived(title string, andMode bool) bool {
 	var found = 0
-	const keywordLength = 2
+	const keywordLength = 3
 	keywordList := [keywordLength]string{
 		"消防",
 		"竹市",
+		"義消",
 	}
 
 	for i := 0; i < keywordLength; i++ {
