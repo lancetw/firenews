@@ -537,7 +537,7 @@ func main() {
 	v1 := router.Group("/api/news/v1")
 	{
 		v1.GET("/main", func(c *gin.Context) {
-			includeText := "%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E9%80%81%E9%86%AB%7Ccpr"
+			includeText := "%E6%B6%88%E9%98%B2%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%87%92%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E6%95%91%E7%81%BD%7C%E9%80%81%E9%86%AB%7C%E8%AD%A6%E6%B6%88%7C%E7%BE%A9%E6%B6%88%7Ccpr"
 			var news [17]([]RssItem)
 			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/1432933957568832221")
 			news[1] = LoadRSS("火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||台鐵香山||香山火車站||香山站||雲梯||打火", "https://www.google.com.tw/alerts/feeds/04784784225885481651/11834919735038606131")
