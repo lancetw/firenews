@@ -373,39 +373,11 @@ func UinqueElements(elements []RssItem) []RssItem {
 	return elements[:len(tmp)]
 }
 
-func titleIsActived(title string, andMode bool) bool {
-	var found = 0
-	const keywordLength = 3
-	keywordList := [keywordLength]string{
-		"消防",
-		"竹市",
-		"義消",
-	}
+func titleIsActived(title string, keywords string) bool {
+	rp := regexp.MustCompile(include)
+	found := rp.MatchString(keywords)
 
-	for i := 0; i < keywordLength; i++ {
-		if strings.Contains(title, keywordList[i]) {
-			found = found + 1
-			if !andMode {
-				break
-			}
-		} else {
-			if andMode {
-				found = found - 1
-			}
-		}
-	}
-
-	if andMode {
-		if found == keywordLength {
-			return true
-		}
-	} else {
-		if found > 0 {
-			return true
-		}
-	}
-
-	return false
+	return found
 }
 
 // ActiveElements active elements
@@ -413,7 +385,7 @@ func ActiveElements(elements []RssItem) []RssItem {
 	for i, item := range elements {
 		if _, found := activedSource[item.Keyword]; found {
 			elements[i].Status = 1
-		} else if titleIsActived(item.Title, true) {
+		} else if titleIsActived(item.Title, "竹市.*消防|消防.*竹市|竹市.*義消|義消.*竹市") {
 			elements[i].Status = 1
 		}
 	}
