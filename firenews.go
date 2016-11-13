@@ -272,6 +272,11 @@ func LoadRSS(tag string, url string) []RssItem {
 			local = local.In(location)
 		}
 
+		switch tag {
+		case "民眾日報（記者方詠騰）":
+			local = local.Add(-14 * time.Hour)
+		}
+
 		title := html.UnescapeString(p.Sanitize(item.Title))
 
 		h := fnv.New32a()
@@ -553,7 +558,7 @@ func main() {
 			news[11] = LoadRSS("自由時報國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fworld.xml&include="+includeText)
 			news[12] = LoadRSS("聯合新聞國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2FBREAKINGNEWS4.xml&include="+includeText)
 			news[13] = LoadRSS("中國時報國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include="+includeText)
-			news[14] = LoadRSS("民眾日報", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
+			news[14] = LoadRSS("民眾日報（記者方詠騰）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
 			news[15] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[16] = LoadRSS("蘋果日報即時", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include="+includeText)
 			news[0] = append(news[0], news[1]...)
@@ -593,7 +598,7 @@ func main() {
 			news[6] = LoadRSS("聯合新聞社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include="+includeText)
 			news[7] = LoadRSS("自由時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include="+includeText)
 			news[8] = LoadRSS("蘋果日報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include="+includeText)
-			news[9] = LoadRSS("民眾日報", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
+			news[9] = LoadRSS("民眾日報（記者方詠騰）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
 			news[10] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[11] = LoadRSS("蘋果日報 要聞", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include="+includeText)
 			news[0] = append(news[0], news[1]...)
