@@ -668,7 +668,7 @@ func main() {
 			news[15] = LoadRSS("Google 快訊 火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||台鐵香山||香山火車站||香山站||雲梯||打火", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F11834919735038606131&include="+includeText)
 			news[16] = LoadRSS("Google 快訊 竹市 義消", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F18304303068024362009&include="+includeText)
 			news[17] = LoadRSS("Google 快訊 竹市 雲梯", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10993434182923813560&include="+includeText)
-			news[18] = LoadRSS("指傳媒", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2&include="+includeText)
+			news[18] = LoadRSS("指傳媒", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2%26cat%3D2650&include="+includeText)
 			news[19] = LoadRSS("台灣好報 地方新聞", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fnewstaiwan&include="+includeText)
 			news[20] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[21] = LoadRSS("天眼日報 警消新聞", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include="+includeText)
