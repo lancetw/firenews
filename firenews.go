@@ -673,7 +673,7 @@ func main() {
 			news[20] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
 			news[21] = LoadRSS("天眼日報 警消新聞", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include="+includeText)
 			//news[22] = LoadRSS("新竹市政府", filterAPIPoint + "filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText)
-			news[23] = LoadRSS("大成報", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.greatnews.com.tw%2Fhomeㄑ%2Frss.php&include="+includeText)
+			news[23] = LoadRSS("大成報", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.greatnews.com.tw%2Fhome%2Frss.php&include="+includeText)
 			news[24] = LoadRSS("聯合新聞網 地方桃竹苗版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include="+includeText)
 			news[25] = LoadRSS("中華新聞網", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fcdns&include="+includeText)
 			//news[26] = LoadRSS("蕃新聞", filterAPIPoint + "filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
