@@ -685,7 +685,7 @@ func main() {
 			news[32] = LoadRSS("聯合新聞網 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[33] = LoadRSS("台灣好新聞", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F3504523367051993014&include="+includeText)
 			news[34] = LoadRSS("中時電子報 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
-			news[35] = LoadRSS("聯合新聞網 地方", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include="+includeText)
+			news[35] = LoadRSS("聯合新聞網 地方", filterAPIPoint+"filter?url=https%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%3Fch%3Dnews&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
