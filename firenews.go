@@ -405,11 +405,14 @@ func ActiveAllElements(elements []RssItem) []RssItem {
 
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
+	keywords := "關鍵字搜尋搜尋|行善|廟|寺"
+	rp := regexp.MustCompile(keywords)
+
 	for i := len(elements) - 1; i >= 0; i-- {
 		item := elements[i]
 		if _, found := blockedSource[item.Keyword]; found {
 			elements = append(elements[:i], elements[i+1:]...)
-		} else if strings.Contains("關鍵字搜尋搜尋", item.Title) {
+		} else if rp.MatchString(CJKnorm(item.Title)) {
 			elements = append(elements[:i], elements[i+1:]...)
 		}
 	}
