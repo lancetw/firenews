@@ -649,7 +649,7 @@ func main() {
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
 			includeText := "%E7%AB%B9%E5%B8%82.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E7%AB%B9%E5%B8%82%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E9%9B%B2%E6%A2%AF%7C%E9%9B%B2%E6%A2%AF.%2A%E6%9E%97%E6%99%BA%E5%A0%85%7C%E6%B6%88%E9%98%B2.%2A%E9%A6%99%E5%B1%B1%7C%E9%A6%99%E5%B1%B1.%2A%E6%B6%88%E9%98%B2%7C%E6%B6%88%E9%98%B2.%2A%E6%9E%97%E6%99%BA%E5%A0%85%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E6%B6%88%E9%98%B2%7C%E7%AB%B9%E5%B8%82.%2A%E7%BE%A9%E6%B6%88%7C%E7%BE%A9%E6%B6%88.%2A%E7%AB%B9%E5%B8%82%7C%E7%BE%A9%E6%B6%88.%2A%E6%9E%97%E6%99%BA%E5%A0%85%7C%E6%9E%97%E6%99%BA%E5%A0%85.%2A%E7%BE%A9%E6%B6%88%7C%E7%AB%B9%E5%B8%82.%2A%E9%98%B2%E7%81%BD%7C%E9%98%B2%E7%81%BD.%2A%E7%AB%B9%E5%B8%82%7C%E6%96%B0%E7%AB%B9.%2A%E6%B7%B9%E6%B0%B4%7C%E6%B7%B9%E6%B0%B4.%2A%E6%96%B0%E7%AB%B9%7C%E7%AB%B9%E5%B8%82.%2A%E6%B7%B9%E6%B0%B4%7C%E6%B7%B9%E6%B0%B4.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2ACPR%7CCPR.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2AAED%7CAED.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E6%95%91%E8%AD%B7%7C%E6%95%91%E8%AD%B7.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E7%89%B9%E6%90%9C%7C%E7%89%B9%E6%90%9C.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E6%90%B6%E6%95%91%7C%E6%90%B6%E6%95%91.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E6%95%91%E6%8F%B4%7C%E6%95%91%E6%8F%B4.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E8%AD%A6%E6%B6%88%7C%E8%AD%A6%E6%B6%88.%2A%E7%AB%B9%E5%B8%82%7C%E7%AB%B9%E5%B8%82.%2A%E9%B3%B3%E5%87%B0%E5%BF%97%E5%B7%A5%7C%E9%B3%B3%E5%87%B0%E5%BF%97%E5%B7%A5.%2A%E7%AB%B9%E5%B8%82"
-			var news [35]([]RssItem)
+			var news [36]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
 			news[2] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
@@ -685,6 +685,7 @@ func main() {
 			news[32] = LoadRSS("聯合新聞網 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[33] = LoadRSS("台灣好新聞", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F3504523367051993014&include="+includeText)
 			news[34] = LoadRSS("中時電子報 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
+			news[35] = LoadRSS("聯合新聞網 地方", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include="+includeText)
 			news[0] = append(news[0], news[1]...)
 			news[0] = append(news[0], news[2]...)
 			news[0] = append(news[0], news[3]...)
@@ -719,6 +720,7 @@ func main() {
 			news[0] = append(news[0], news[32]...)
 			news[0] = append(news[0], news[33]...)
 			news[0] = append(news[0], news[34]...)
+			news[0] = append(news[0], news[35]...)
 			news[0] = UinqueElements(news[0])
 			news[0] = CleanupElements(news[0])
 			news[0] = ActiveAllElements(news[0])
