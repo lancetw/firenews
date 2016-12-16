@@ -16,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
+	fb "github.com/huandu/facebook"
 	"github.com/itsjamie/gin-cors"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
@@ -32,6 +33,7 @@ const dateTimeFormat4 = "Mon,02 Jan 2006 15:04:05  -0700"
 const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
 const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
 const dateTimeFormat7 = "Mon, 2 Jan 2006 15:04:05 GMT"
+const dateTimeFormatFB = "2006-01-02T15:04:05-0700"
 
 var newsSource = map[string]string{
 	"twpowernews.com":                 "勁報",
@@ -183,6 +185,18 @@ var activedSource = map[string]bool{
 	"udn.com":           true,
 }
 
+// FacebookItem struct
+type FacebookItem struct {
+	Gid        string    `json:"id"`
+	Pid        string    `json:"id"`
+	Message    string    `json:"message"`
+	Story      string    `json:"story"`
+	Time       time.Time `json:"time"`
+	TimeText   string    `json:"timeText"`
+	Link       string    `json:"link"`
+	OriginLink string    `json:"originLink"`
+}
+
 // RssItem struct
 type RssItem struct {
 	Title      string `json:"title"`
@@ -235,7 +249,7 @@ func LoadRSS(tag string, url string) []RssItem {
 		return collect
 	}
 
-	location, err := time.LoadLocation(timeZone)
+	location, loadLocationErr := time.LoadLocation(timeZone)
 
 	for _, item := range feed.Items {
 		local, dateTimeErr := time.Parse(dateTimeFormat0, item.Published)
@@ -265,7 +279,7 @@ func LoadRSS(tag string, url string) []RssItem {
 			fmt.Printf("Failed parse dateTime: %v\n", item.Published)
 		}
 
-		if err == nil {
+		if loadLocationErr == nil {
 			local = local.In(location)
 		}
 
@@ -731,6 +745,75 @@ func main() {
 
 			c.JSON(200, gin.H{
 				"news": news[0],
+			})
+		})
+	}
+
+	facebookv1 := router.Group("/api/facebook/v1")
+	{
+		facebookv1.GET("/feed/:id", func(c *gin.Context) {
+			include := c.Query("include")
+			appID := "1154770827904156"
+			appSecret := "dc0cc2d41255119776b6a9a82ef568c9"
+
+			app := fb.New(appID, appSecret)
+			accessToken := appID + "|" + appSecret
+			session := app.Session(accessToken)
+			id := c.Param("id")
+			res, _ := session.Get("/"+id+"/feed", nil)
+
+			paging, _ := res.Paging(session)
+			results := paging.Data()
+
+			location, loadLocationErr := time.LoadLocation(timeZone)
+
+			collect := []FacebookItem{}
+			for _, result := range results {
+				local, _ := time.Parse(dateTimeFormatFB, fmt.Sprint(result["updated_time"]))
+				if loadLocationErr == nil {
+					local = local.In(location)
+				}
+
+				id := strings.Split(result["id"].(string), "_")
+				link := "https://www.facebook.com/groups/" + id[0] + "/permalink/" + id[1] + "/"
+
+				var story string
+				if result["story"] != nil {
+					story = result["story"].(string)
+				}
+
+				var message string
+				if result["message"] != nil {
+					message = result["message"].(string)
+				}
+
+				fb := FacebookItem{
+					Gid:        id[0],
+					Pid:        id[1],
+					Story:      story,
+					Message:    message,
+					Link:       link,
+					OriginLink: link,
+					Time:       local,
+					TimeText:   local.Format("15:04"),
+				}
+
+				collect = append(collect, fb)
+			}
+
+			var foundItems = []FacebookItem{}
+
+			rp := regexp.MustCompile(include)
+			for _, item := range collect {
+				foundMessage := rp.MatchString(CJKnorm(item.Message))
+
+				if foundMessage {
+					foundItems = append(foundItems, item)
+				}
+			}
+
+			c.JSON(200, gin.H{
+				"fb": foundItems,
 			})
 		})
 	}
