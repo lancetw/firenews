@@ -2,9 +2,6 @@
 	"ImportPath": "github.com/lancetw/firenews",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
@@ -37,6 +34,11 @@
 		{
 			"ImportPath": "github.com/gorilla/feeds",
 			"Rev": "441264de03a8117ed530ae8e049d8f601a33a099"
+		},
+		{
+			"ImportPath": "github.com/huandu/facebook",
+			"Comment": "v1.7.1-2-g09d747b",
+			"Rev": "09d747bf3afe65c084508baa5d25a2553ce21496"
 		},
 		{
 			"ImportPath": "github.com/itsjamie/gin-cors",
