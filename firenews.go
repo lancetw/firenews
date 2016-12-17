@@ -769,7 +769,10 @@ func main() {
 
 			collect := []FacebookItem{}
 			for _, result := range results {
-				local, _ := time.Parse(dateTimeFormatFB, fmt.Sprint(result["updated_time"]))
+				local, parseErr := time.Parse(dateTimeFormatFB, fmt.Sprint(result["created_time"]))
+				if parseErr != nil {
+					local, _ = time.Parse(dateTimeFormatFB, fmt.Sprint(result["updated_time"]))
+				}
 				if loadLocationErr == nil {
 					local = local.In(location)
 				}
