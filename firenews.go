@@ -760,7 +760,12 @@ func main() {
 			accessToken := appID + "|" + appSecret
 			session := app.Session(accessToken)
 			id := c.Param("id")
-			res, _ := session.Get("/"+id+"/feed", nil)
+			res, fbErr := session.Get("/"+id+"/feed", nil)
+
+			if fbErr != nil {
+				fmt.Println(fbErr)
+				return
+			}
 
 			paging, _ := res.Paging(session)
 			results := paging.Data()
