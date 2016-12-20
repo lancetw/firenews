@@ -419,7 +419,7 @@ func ActiveAllElements(elements []RssItem) []RssItem {
 
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
-	keywords := "關鍵字搜尋搜尋|行善|廟|寺|地震.*局勢|局勢.*地震|地震.*經濟|經濟.*地震|颱風.*收成|收成.*颱風|颱風.*價格|價格.*颱風|竹市.*貸款|貸款.*竹市|颱風.保險|保險.*颱風|地震.保險|保險.*地震"
+	keywords := "關鍵字搜尋搜尋|行善|廟|寺|地震.*局勢|局勢.*地震|地震.*經濟|經濟.*地震|收成|收成|價格|貸款|保險"
 	rp := regexp.MustCompile(keywords)
 
 	for i := len(elements) - 1; i >= 0; i-- {
