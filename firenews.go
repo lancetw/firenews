@@ -753,6 +753,7 @@ func main() {
 	{
 		facebookv1.GET("/feed/:id", func(c *gin.Context) {
 			include := c.Query("include")
+			fbType := c.Query("type")
 			appID := "1154770827904156"
 			appSecret := "dc0cc2d41255119776b6a9a82ef568c9"
 
@@ -783,7 +784,13 @@ func main() {
 				}
 
 				id := strings.Split(result["id"].(string), "_")
-				link := "https://www.facebook.com/groups/" + id[0] + "/permalink/" + id[1] + "/"
+
+				var link string
+				if fbType == "pg" {
+					link = "https://www.facebook.com/permalink.php?story_fbid=" + id[0] + "&id=" + id[1]
+				} else {
+					link = "https://www.facebook.com/groups/" + id[0] + "/permalink/" + id[1] + "/"
+				}
 
 				var story string
 				if result["story"] != nil {
