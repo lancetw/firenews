@@ -787,7 +787,7 @@ func main() {
 
 				var link string
 				if fbType == "pg" {
-					link = "https://www.facebook.com/permalink.php?story_fbid=" + id[0] + "&id=" + id[1]
+					link = "https://www.facebook.com/permalink.php?story_fbid=" + id[1] + "&id=" + id[0]
 				} else {
 					link = "https://www.facebook.com/groups/" + id[0] + "/permalink/" + id[1] + "/"
 				}
