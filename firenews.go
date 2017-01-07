@@ -397,11 +397,14 @@ func UinqueElements(elements []RssItem) []RssItem {
 		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source0 {
-			duplicated = true
+			if ele.Source != source0 {
+				duplicated = true
+			} else {
+				ele.Status = 1
+			}
 		}
 
 		if !duplicated {
-			ele.Status = 1
 			tmp[ele.Title+ele.Source] = ele
 		}
 	}
