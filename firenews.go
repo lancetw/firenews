@@ -393,7 +393,6 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}, ele.Title)
 
 		duplicated = false
-
 		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source {
@@ -401,9 +400,8 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}
 
 		if !duplicated {
-			tmp[ele.Title+ele.Source] = ele
+			tmp[ele.Link] = ele
 		}
-
 	}
 
 	var i int
