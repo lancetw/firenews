@@ -388,12 +388,39 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 		tmp[ele.Title+ele.Source] = ele
 	}
+
+	tag := "中央社"
+	cnaTitles := tagTitles(elements, tag)
 	var i int
+	var duplicated bool
 	for _, ele := range tmp {
-		elements[i] = ele
+		duplicated = false
+
+		sort.Strings(cnaTitles)
+		n := sort.SearchStrings(cnaTitles, ele.Title)
+		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Tag != tag {
+			duplicated = true
+		}
+
+		if !duplicated {
+			elements[i] = ele
+		}
+
 		i++
 	}
 	return elements[:len(tmp)]
+}
+
+// tagTitles get titles from a specific tag
+func tagTitles(elements []RssItem, tag string) []string {
+	var titles []string
+	for _, ele := range elements {
+		if ele.Tag == tag {
+			titles = append(titles, ele.Title)
+		}
+	}
+
+	return titles
 }
 
 func titleIsActived(title string, keywords string) bool {
