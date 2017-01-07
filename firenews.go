@@ -416,6 +416,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 		n := sort.SearchStrings(chinatimesTitles, ele.Title)
 		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title && ele.Source != source1 {
 			duplicated = true
+			ele.Source = source1
 		}
 
 		if !duplicated {
@@ -437,6 +438,12 @@ func tagSources(elements []RssItem, source string) []string {
 	var titles []string
 	for _, ele := range elements {
 		if ele.Source == source {
+			ele.Title = strings.Map(func(r rune) rune {
+				if unicode.IsSpace(r) {
+					return -1
+				}
+				return r
+			}, ele.Title)
 			titles = append(titles, ele.Title)
 		}
 	}
