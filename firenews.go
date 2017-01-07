@@ -189,7 +189,6 @@ var activedSource = map[string]bool{
 	"chinatimes.com":    true,
 	"appledaily.com.tw": true,
 	"udn.com":           true,
-	"cna.com.tw":        true,
 }
 
 // FacebookItem struct
@@ -402,6 +401,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}
 
 		if !duplicated {
+			ele.Status = 1
 			tmp[ele.Title+ele.Source] = ele
 		}
 	}
