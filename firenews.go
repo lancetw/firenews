@@ -390,8 +390,9 @@ func UinqueElements(elements []RssItem) []RssItem {
 		tmp[ele.Title+ele.Source] = ele
 	}
 
-	tag := "中央社"
-	cnaTitles := tagTitles(elements, tag)
+	source := "中央社"
+	cnaTitles := tagSources(elements, source)
+
 	var i int
 	var j int
 	var duplicated bool
@@ -400,7 +401,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
-		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Tag != tag {
+		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source {
 			duplicated = true
 			j++
 		}
@@ -414,11 +415,11 @@ func UinqueElements(elements []RssItem) []RssItem {
 	return elements[:len(tmp)-j]
 }
 
-// tagTitles get titles from a specific tag
-func tagTitles(elements []RssItem, tag string) []string {
+// tagSources get titles from a specific tag
+func tagSources(elements []RssItem, source string) []string {
 	var titles []string
 	for _, ele := range elements {
-		if ele.Tag == tag {
+		if ele.Source == source {
 			titles = append(titles, ele.Title)
 		}
 	}
