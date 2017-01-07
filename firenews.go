@@ -385,6 +385,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 	var duplicated bool
 	tmp := make(map[string]RssItem, 0)
+	sort.Strings(cnaTitles)
 	for _, ele := range elements {
 		ele.Title = strings.Map(func(r rune) rune {
 			if unicode.IsSpace(r) {
@@ -394,7 +395,6 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}, ele.Title)
 
 		duplicated = false
-		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source0 {
 			if ele.Source != source0 {
@@ -410,13 +410,14 @@ func UinqueElements(elements []RssItem) []RssItem {
 	}
 
 	tmp2 := make(map[string]RssItem, 0)
+	sort.Strings(chinatimesTitles)
 	for _, ele := range tmp {
 		duplicated = false
-		sort.Strings(chinatimesTitles)
 		n := sort.SearchStrings(chinatimesTitles, ele.Title)
-		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title && ele.Source == source1 {
+		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title && ele.Source != source1 {
 			duplicated = true
 		}
+
 		if !duplicated {
 			tmp2[ele.Link] = ele
 		}
