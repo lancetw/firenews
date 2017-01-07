@@ -189,6 +189,7 @@ var activedSource = map[string]bool{
 	"chinatimes.com":    true,
 	"appledaily.com.tw": true,
 	"udn.com":           true,
+	"cna.com.tw":        true,
 }
 
 // FacebookItem struct
