@@ -411,13 +411,14 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 	tmp2 := make(map[string]RssItem, 0)
 	sort.Strings(chinatimesTitles)
+	var duplicatedList []string
 	for _, ele := range tmp {
 		duplicated = false
 		n := sort.SearchStrings(chinatimesTitles, ele.Title)
 		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title {
 			if ele.Source != source1 {
 				duplicated = true
-			} else {
+				duplicatedList = append(duplicatedList, ele.Title)
 			}
 		}
 
@@ -426,8 +427,13 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}
 	}
 
+	sort.Strings(duplicatedList)
 	var i int
 	for _, ele := range tmp2 {
+		n := sort.SearchStrings(duplicatedList, ele.Title)
+		if n < len(duplicatedList) && duplicatedList[n] == ele.Title {
+			ele.Source = source0
+		}
 		elements[i] = ele
 		i++
 	}
