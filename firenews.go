@@ -392,6 +392,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 	tag := "中央社"
 	cnaTitles := tagTitles(elements, tag)
 	var i int
+	var j int
 	var duplicated bool
 	for _, ele := range tmp {
 		duplicated = false
@@ -400,6 +401,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Tag != tag {
 			duplicated = true
+			j++
 		}
 
 		if !duplicated {
@@ -408,7 +410,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 		i++
 	}
-	return elements[:len(tmp)]
+	return elements[:len(tmp)-j]
 }
 
 // tagTitles get titles from a specific tag
