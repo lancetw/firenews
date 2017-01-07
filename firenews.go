@@ -671,7 +671,7 @@ func main() {
 			})
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
-			includeText := "竹市.*火勢|火勢.*竹市|竹市.*大火|大火.*竹市|竹市.*火災|火災.*竹市|竹市.*火警|火警.*竹市|竹市.*消防|消防.*竹市|竹市.*住警器|住警器.*竹市|竹市.*住宅火警器|住宅火警器.*竹市|竹市.*雲梯|雲梯.*竹市|林智堅.*雲梯|雲梯.*林智堅|消防.*香山|香山.*消防|消防.*林智堅|林智堅.*消防|竹市.*義消|義消.*竹市|義消.*林智堅|林智堅.*義消|竹市.*防災|防災.*竹市|新竹.*淹水|淹水.*新竹|竹市.*淹水|淹水.*竹市|竹市.*CPR|CPR.*竹市|竹市.*AED|AED.*竹市|竹市.*救護|救護.*竹市|竹市.*特搜|特搜.*竹市|竹市.*搶救|搶救.*竹市|竹市.*救援|救援.*竹市|竹市.*警消|警消.*竹市|竹市.*鳳凰志工|鳳凰志工.*竹市|消安.*竹市|竹市.*消安|防火.*竹市|竹市.*防火|竄火.*竹市|竹市.*竄火|被燒.*竹市|竹市.*被燒|中毒.*竹市|竹市.*中毒|竹市.*臥軌|臥軌.*竹市|竹市.*跳軌|跳軌.*竹市|竹市.*落軌|落軌.*竹市"
+			includeText := "竹市.*火勢|火勢.*竹市|竹市.*大火|大火.*竹市|竹市.*火災|火災.*竹市|竹市.*火警|火警.*竹市|竹市.*消防|消防.*竹市|竹市.*住警器|住警器.*竹市|竹市.*住宅火警器|住宅火警器.*竹市|竹市.*雲梯|雲梯.*竹市|林智堅.*雲梯|雲梯.*林智堅|消防.*香山|香山.*消防|消防.*林智堅|林智堅.*消防|竹市.*義消|義消.*竹市|義消.*林智堅|林智堅.*義消|竹市.*防災|防災.*竹市|新竹.*淹水|淹水.*新竹|竹市.*淹水|淹水.*竹市|竹市.*CPR|CPR.*竹市|竹市.*AED|AED.*竹市|竹市.*救護|救護.*竹市|竹市.*特搜|特搜.*竹市|竹市.*搶救|搶救.*竹市|竹市.*救援|救援.*竹市|竹市.*警消|警消.*竹市|竹市.*鳳凰志工|鳳凰志工.*竹市|消安.*竹市|竹市.*消安|防火.*竹市|竹市.*防火|竄火.*竹市|竹市.*竄火|被燒.*竹市|竹市.*被燒|中毒.*竹市|竹市.*中毒|竹市.*臥軌|臥軌.*竹市|竹市.*跳軌|跳軌.*竹市|竹市.*落軌|落軌.*竹市|新竹.*臥軌|臥軌.*新竹|新竹.*跳軌|跳軌.*新竹|新竹.*落軌|落軌.*新竹"
 			var news [37]([]RssItem)
 			news[0] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
 			news[1] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
@@ -688,7 +688,7 @@ func main() {
 			news[12] = LoadRSS("台灣新聞報（記者戴欣怡）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwnewsdaily&include="+includeText)
 			news[13] = LoadRSS("Google 快訊 竹市||台鐵香山||香山火車站||香山站", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include="+includeText)
 			news[14] = LoadRSS("Google 快訊 竹市消防局||勤務派遣科", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F7890686135979287740&include="+includeText)
-			news[15] = LoadRSS("Google 快訊 火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||台鐵香山||香山火車站||香山站||雲梯||打火", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F11834919735038606131&include="+includeText)
+			news[15] = LoadRSS("Google 快訊 火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||臥軌||台鐵香山||香山火車站||香山站||雲梯||打火", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F11834919735038606131&include="+includeText)
 			news[16] = LoadRSS("Google 快訊 竹市 義消", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F18304303068024362009&include="+includeText)
 			news[17] = LoadRSS("Google 快訊 竹市 雲梯", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10993434182923813560&include="+includeText)
 			news[18] = LoadRSS("指傳媒", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2%26cat%3D2650&include="+includeText)
