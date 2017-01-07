@@ -400,17 +400,22 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}
 
 		if !duplicated {
-			tmp[ele.Link] = ele
+			tmp[ele.Title+ele.Source] = ele
 		}
 	}
 
-	var i int
+	tmp2 := make(map[string]RssItem, 0)
 	for _, ele := range tmp {
+		tmp2[ele.Link] = ele
+	}
+
+	var i int
+	for _, ele := range tmp2 {
 		elements[i] = ele
 		i++
 	}
 
-	return elements[:len(tmp)]
+	return elements[:len(tmp2)]
 }
 
 // tagSources get titles from a specific source
