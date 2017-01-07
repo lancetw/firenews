@@ -378,6 +378,11 @@ func GetURL(str string) (string, string) {
 
 // UinqueElements removes duplicates
 func UinqueElements(elements []RssItem) []RssItem {
+
+	source := "中央通訊社"
+	cnaTitles := tagSources(elements, source)
+
+	var duplicated bool
 	tmp := make(map[string]RssItem, 0)
 	for _, ele := range elements {
 		ele.Title = strings.Map(func(r rune) rune {
@@ -387,35 +392,30 @@ func UinqueElements(elements []RssItem) []RssItem {
 			return r
 		}, ele.Title)
 
-		tmp[ele.Title+ele.Source] = ele
-	}
-
-	source := "中央通訊社"
-	cnaTitles := tagSources(elements, source)
-
-	var i int
-	var j int
-	var duplicated bool
-	for _, ele := range tmp {
 		duplicated = false
 
 		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source {
 			duplicated = true
-			j++
 		}
 
 		if !duplicated {
-			elements[i] = ele
+			tmp[ele.Title+ele.Source] = ele
 		}
 
+	}
+
+	var i int
+	for _, ele := range tmp {
+		elements[i] = ele
 		i++
 	}
-	return elements[:len(tmp)-j]
+
+	return elements[:len(tmp)]
 }
 
-// tagSources get titles from a specific tag
+// tagSources get titles from a specific source
 func tagSources(elements []RssItem, source string) []string {
 	var titles []string
 	for _, ele := range elements {
