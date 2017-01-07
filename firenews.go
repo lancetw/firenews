@@ -414,9 +414,12 @@ func UinqueElements(elements []RssItem) []RssItem {
 	for _, ele := range tmp {
 		duplicated = false
 		n := sort.SearchStrings(chinatimesTitles, ele.Title)
-		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title && ele.Source != source1 {
-			duplicated = true
-			ele.Source = source0
+		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title {
+			if ele.Source != source1 {
+				duplicated = true
+			} else {
+				ele.Source = source0
+			}
 		}
 
 		if !duplicated {
