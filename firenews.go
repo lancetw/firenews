@@ -418,7 +418,6 @@ func UinqueElements(elements []RssItem) []RssItem {
 			if ele.Source != source1 {
 				duplicated = true
 			} else {
-				ele.Source = source0
 			}
 		}
 
