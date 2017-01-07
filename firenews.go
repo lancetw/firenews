@@ -379,8 +379,10 @@ func GetURL(str string) (string, string) {
 // UinqueElements removes duplicates
 func UinqueElements(elements []RssItem) []RssItem {
 
-	source := "中央通訊社"
-	cnaTitles := tagSources(elements, source)
+	source0 := "中央通訊社"
+	source1 := "中時電子報"
+	cnaTitles := tagSources(elements, source0)
+	chinatimesTitles := tagSources(elements, source1)
 
 	var duplicated bool
 	tmp := make(map[string]RssItem, 0)
@@ -395,7 +397,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 		duplicated = false
 		sort.Strings(cnaTitles)
 		n := sort.SearchStrings(cnaTitles, ele.Title)
-		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source {
+		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source0 {
 			duplicated = true
 		}
 
@@ -406,7 +408,15 @@ func UinqueElements(elements []RssItem) []RssItem {
 
 	tmp2 := make(map[string]RssItem, 0)
 	for _, ele := range tmp {
-		tmp2[ele.Link] = ele
+		duplicated = false
+		sort.Strings(chinatimesTitles)
+		n := sort.SearchStrings(chinatimesTitles, ele.Title)
+		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title && ele.Source != source1 {
+			duplicated = true
+		}
+		if !duplicated {
+			tmp2[ele.Link] = ele
+		}
 	}
 
 	var i int
