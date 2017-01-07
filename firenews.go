@@ -151,6 +151,11 @@ var newsSource = map[string]string{
 	"moi.gov.tw":                      "中華民國內政部",
 	"brain.com.tw":                    "動腦新聞",
 	"mobile01.com":                    "mobile01",
+	"hk01.com":                        "香港01",
+	"mingpao.com":                     "明報新聞網",
+	"passiontimes.hk":                 "熱血時報",
+	"hkej.com":                        "信報",
+	"thestandnews.com":                "立場新聞",
 }
 
 var blockedSource = map[string]bool{
@@ -176,6 +181,7 @@ var blockedSource = map[string]bool{
 	"hk.apple.nextmedia.com": true,
 	"s.nextmedia.com":        true,
 	"sina.com.hk":            true,
+	"info.gov.hk":            true,
 }
 
 var activedSource = map[string]bool{
@@ -419,7 +425,7 @@ func ActiveAllElements(elements []RssItem) []RssItem {
 
 // CleanupElements makes elements clean
 func CleanupElements(elements []RssItem) []RssItem {
-	keywords := "關鍵字搜尋搜尋|行善|廟|寺|地震.*局勢|局勢.*地震|地震.*經濟|經濟.*地震|收成|收成|價格|貸款|保險|價揚|治安|人壽|訂單|投資|火燒心"
+	keywords := "關鍵字搜尋搜尋|行善|廟|寺|地震.*局勢|局勢.*地震|地震.*經濟|經濟.*地震|收成|收成|價格|貸款|保險|價揚|治安|人壽|訂單|投資|火燒心|daily"
 	rp := regexp.MustCompile(keywords)
 
 	for i := len(elements) - 1; i >= 0; i-- {
