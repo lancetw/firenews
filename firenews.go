@@ -107,6 +107,7 @@ var newsSource = map[string]string{
 	"civilmedia.tw":                   "公民行動影音紀錄資料庫",
 	"tw.iscarmg.com":                  "iscar!",
 	"hk.news.yahoo.com":               "Yahoo香港",
+	"hk.celebrity.yahoo.com":          "Yahoo香港",
 	"hk.apple.nextmedia.com":          "香港蘋果日報",
 	"s.nextmedia.com":                 "香港蘋果日報",
 	"cdn.org.tw":                      "基督教今日報",
