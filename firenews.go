@@ -917,7 +917,7 @@ func main() {
 			news[0] = LoadRSS("爆料公社", filterAPIPoint+"filter?url=http%3A%2F%2Fhcfdrss.blogspot.com%2Ffeeds%2Fposts%2Fdefault&include="+includeText)
 
 			c.JSON(200, gin.H{
-				"feed": news,
+				"feed": news[0],
 			})
 		})
 	}
