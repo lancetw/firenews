@@ -908,5 +908,19 @@ func main() {
 		})
 	}
 
+	bloggerv1 := router.Group("/api/blogger/v1")
+	{
+		bloggerv1.GET("/feed/:id", func(c *gin.Context) {
+			includeText := c.Query("include")
+
+			var news [1]([]RssItem)
+			news[0] = LoadRSS("爆料公社", filterAPIPoint+"filter?url=http%3A%2F%2Fhcfdrss.blogspot.com%2Ffeeds%2Fposts%2Fdefault&include="+includeText)
+
+			c.JSON(200, gin.H{
+				"feed": news,
+			})
+		})
+	}
+
 	router.Run() // 0.0.0.0:8080
 }
