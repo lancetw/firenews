@@ -159,7 +159,7 @@ var newsSource = map[string]string{
 	"thestandnews.com":                "立場新聞",
 	"info.gov.hk":                     "香港特別行政區政府新聞公報",
 	"macaodaily.com":                  "澳門日報",
-	"hcfdrss.blogspot.com":            "爆料公社RSS",
+	"hcfdrss.blogspot.com":            "爆料公社",
 }
 
 var blockedSource = map[string]bool{
@@ -204,6 +204,7 @@ type FacebookItem struct {
 	TimeText   string    `json:"timeText"`
 	Link       string    `json:"link"`
 	OriginLink string    `json:"originLink"`
+	Source     string    `json:"source"`
 }
 
 // RssItem struct
@@ -838,7 +839,6 @@ func main() {
 			session := app.Session(accessToken)
 			id := c.Param("id")
 			res, fbErr := session.Get("/"+id+"/feed", nil)
-
 			if fbErr != nil {
 				fmt.Println(fbErr)
 				return
@@ -846,6 +846,14 @@ func main() {
 
 			paging, _ := res.Paging(session)
 			results := paging.Data()
+
+			res, fbErr = session.Get("/"+id, nil)
+			if fbErr != nil {
+				fmt.Println(fbErr)
+				return
+			}
+
+			source := res["name"].(string)
 
 			location, loadLocationErr := time.LoadLocation(timeZone)
 
@@ -887,6 +895,7 @@ func main() {
 					OriginLink: link,
 					Time:       local,
 					TimeText:   local.Format("15:04"),
+					Source:     source,
 				}
 
 				collect = append(collect, fb)
