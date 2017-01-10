@@ -158,6 +158,7 @@ var newsSource = map[string]string{
 	"hkej.com":                        "信報",
 	"thestandnews.com":                "立場新聞",
 	"info.gov.hk":                     "香港特別行政區政府新聞公報",
+	"macaodaily.com":                  "澳門日報",
 }
 
 var blockedSource = map[string]bool{
