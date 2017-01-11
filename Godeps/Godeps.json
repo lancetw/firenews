@@ -2,6 +2,9 @@
 	"ImportPath": "github.com/lancetw/firenews",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
@@ -48,6 +51,10 @@
 		{
 			"ImportPath": "github.com/manucorporat/sse",
 			"Rev": "ee05b128a739a0fb76c7ebd3ae4810c1de808d6d"
+		},
+		{
+			"ImportPath": "github.com/mark-adams/cap-go/cap",
+			"Rev": "1257d682736c03449bf87874fcf923c15a1b1e50"
 		},
 		{
 			"ImportPath": "github.com/microcosm-cc/bluemonday",

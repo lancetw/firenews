@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"hash/fnv"
 	"html"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -160,6 +162,7 @@ var newsSource = map[string]string{
 	"info.gov.hk":                     "香港特別行政區政府新聞公報",
 	"macaodaily.com":                  "澳門日報",
 	"hcfdrss.blogspot.com":            "爆料公社",
+	"cwb.gov.tw":                      "中央氣象局",
 }
 
 var blockedSource = map[string]bool{
@@ -194,6 +197,27 @@ var activedSource = map[string]bool{
 	"udn.com":           true,
 }
 
+// ResultCap struct
+type ResultCap struct {
+	Language  string      `xml:"info>language"`
+	Web       string      `xml:"info>web"`
+	Parameter []Parameter `xml:"info>parameter"`
+	Resource  []Resource  `xml:"info>resource"`
+}
+
+// Parameter struct
+type Parameter struct {
+	ValueName string `xml:"valueName"`
+	Value     string `xml:"value"`
+}
+
+// Resource struct
+type Resource struct {
+	ResourceDesc string `xml:"resourceDesc"`
+	MimeType     string `xml:"mimeType"`
+	URI          string `xml:"uri"`
+}
+
 // FacebookItem struct
 type FacebookItem struct {
 	Gid        string    `json:"id"`
@@ -209,16 +233,17 @@ type FacebookItem struct {
 
 // RssItem struct
 type RssItem struct {
-	Title      string `json:"title"`
-	TimeText   string `json:"timeText"`
-	Link       string `json:"link"`
-	OriginLink string `json:"originLink"`
-	Source     string `json:"source"`
-	Tag        string `json:"tag"`
-	Keyword    string
-	Time       time.Time `json:"time"`
-	Status     int       `json:"status"`
-	Hash       uint32    `json:"hash"`
+	Title       string `json:"title"`
+	TimeText    string `json:"timeText"`
+	Link        string `json:"link"`
+	OriginLink  string `json:"originLink"`
+	Source      string `json:"source"`
+	Tag         string `json:"tag"`
+	Keyword     string
+	Time        time.Time `json:"time"`
+	Status      int       `json:"status"`
+	Hash        uint32    `json:"hash"`
+	Description string    `json:"description"`
 }
 
 // ByTime implements sort.Interface for []RssItem based on
@@ -246,6 +271,26 @@ func fixedLink(link string, tag string) string {
 	}
 
 	return link
+}
+
+func fetchXML(url string) []byte {
+	var netClient = &http.Client{
+		Timeout: time.Second * 10,
+	}
+	resp, err := netClient.Get(url)
+	if err != nil {
+		fmt.Printf("fetchXML http.Get error: %v", err)
+		os.Exit(1)
+	}
+
+	xmldata, ioErr := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if ioErr != nil {
+		fmt.Printf("fetchXML ioutil.ReadAll error: %v", err)
+		return nil
+	}
+
+	return xmldata
 }
 
 // LoadRSS loads rss from an url
@@ -315,16 +360,17 @@ func LoadRSS(tag string, url string) []RssItem {
 		source, keyword := GetNewsSource(item.Link)
 
 		news := RssItem{
-			Link:       link,
-			OriginLink: originLink,
-			Time:       local,
-			TimeText:   local.Format("15:04"),
-			Title:      title,
-			Source:     source,
-			Tag:        tag,
-			Status:     0,
-			Hash:       hashnum,
-			Keyword:    keyword,
+			Link:        link,
+			OriginLink:  originLink,
+			Time:        local,
+			TimeText:    local.Format("15:04"),
+			Title:       title,
+			Source:      source,
+			Tag:         tag,
+			Status:      0,
+			Hash:        hashnum,
+			Keyword:     keyword,
+			Description: item.Description,
 		}
 
 		collect = append(collect, news)
@@ -544,10 +590,11 @@ func main() {
 	utilv1 := router.Group("/api/util/v1")
 	{
 		utilv1.GET("/filter", func(c *gin.Context) {
-			url := c.Query("url")
+			sURL := c.Query("url")
 			include := c.Query("include")
+			dataType := c.Query("type")
 			parser := gofeed.NewParser()
-			feed, err := parser.ParseURL(url)
+			feed, err := parser.ParseURL(sURL)
 			if err != nil {
 				return
 			}
@@ -588,12 +635,34 @@ func main() {
 
 			newFeed.Items = make([]*feeds.Item, 0)
 			for _, item := range foundItems {
-				newFeed.Items = append(newFeed.Items, &feeds.Item{
-					Title:       item.Title,
-					Link:        &feeds.Link{Href: item.Link},
-					Description: item.Description,
-					Created:     *item.PublishedParsed,
-				})
+				var created time.Time
+				if item.PublishedParsed != nil {
+					created = *item.PublishedParsed
+				} else {
+					created = *item.UpdatedParsed
+				}
+
+				if dataType == "cap" {
+					v := ResultCap{}
+					xmldata := fetchXML(item.Link)
+					xmlErr := xml.Unmarshal([]byte(xmldata), &v)
+					if xmlErr != nil {
+						return
+					}
+					newFeed.Items = append(newFeed.Items, &feeds.Item{
+						Title:       v.Resource[1].URI,
+						Link:        &feeds.Link{Href: v.Web},
+						Description: item.Description,
+						Created:     created,
+					})
+				} else {
+					newFeed.Items = append(newFeed.Items, &feeds.Item{
+						Title:       item.Title,
+						Link:        &feeds.Link{Href: item.Link},
+						Description: item.Description,
+						Created:     created,
+					})
+				}
 			}
 
 			rss, err := newFeed.ToRss()
@@ -733,6 +802,13 @@ func main() {
 			news[0] = ActiveElements(news[0])
 			sort.Sort(ByTime(news[0]))
 
+			c.JSON(200, gin.H{
+				"news": news[0],
+			})
+		})
+		v1.GET("/ncdr", func(c *gin.Context) {
+			var news [1]([]RssItem)
+			news[0] = LoadRSS("地震", filterAPIPoint+"filter?type=cap&url=https://alerts.ncdr.nat.gov.tw/RssAtomFeed.ashx?AlertType=6")
 			c.JSON(200, gin.H{
 				"news": news[0],
 			})
