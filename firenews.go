@@ -163,6 +163,8 @@ var newsSource = map[string]string{
 	"macaodaily.com":                  "澳門日報",
 	"hcfdrss.blogspot.com":            "爆料公社",
 	"cwb.gov.tw":                      "中央氣象局",
+	"yes-news.com":                    "熱新聞 YesNews",
+	"hk.crntt.com":                    "中國評論新聞網",
 }
 
 var blockedSource = map[string]bool{
