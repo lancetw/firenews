@@ -448,6 +448,10 @@ func UinqueElements(elements []RssItem) []RssItem {
 			return r
 		}, ele.Title)
 
+		if strings.HasSuffix(ele.Title, "...") {
+			ele.Title = ele.Title[:len(ele.Title)-3]
+		}
+
 		duplicated = false
 		n := sort.SearchStrings(cnaTitles, ele.Title)
 		if n < len(cnaTitles) && cnaTitles[n] == ele.Title && ele.Source != source0 {
