@@ -188,6 +188,8 @@ var blockedSource = map[string]bool{
 	"hk.apple.nextmedia.com": true,
 	"s.nextmedia.com":        true,
 	"sina.com.hk":            true,
+	"yes-news.com":           true,
+	"hk.crntt.com":           true,
 }
 
 var activedSource = map[string]bool{
