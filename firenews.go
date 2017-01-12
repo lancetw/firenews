@@ -192,6 +192,7 @@ var blockedSource = map[string]bool{
 	"sina.com.hk":            true,
 	"yes-news.com":           true,
 	"hk.crntt.com":           true,
+	"hinet.net":              true,
 }
 
 var activedSource = map[string]bool{
