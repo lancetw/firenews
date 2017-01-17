@@ -17,6 +17,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/feeds"
 	fb "github.com/huandu/facebook"
@@ -617,6 +618,7 @@ func main() {
 	}
 
 	router := gin.Default()
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	router.LoadHTMLGlob("firenewsweb/dist/*.html")
 	router.Static("/static", "firenewsweb/dist/static/")
