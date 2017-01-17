@@ -11,11 +11,13 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
@@ -29,14 +31,19 @@ import (
 )
 
 const timeZone = "Asia/Taipei"
-const dateTimeFormat0 = "2006-01-02T15:04:05Z07:00"
-const dateTimeFormat1 = "Mon, 02 Jan 2006 15:04:05 -0700"
-const dateTimeFormat2 = "Mon, 02 Jan 2006 15:04:05 GMT"
-const dateTimeFormat3 = "2006-01-02 15:04:05"
-const dateTimeFormat4 = "Mon,02 Jan 2006 15:04:05  -0700"
-const dateTimeFormat5 = "2006-01-02 15:04:05 -0700 UTC"
-const dateTimeFormat6 = "2006-01-02T15:04:05-07:00"
-const dateTimeFormat7 = "Mon, 2 Jan 2006 15:04:05 GMT"
+
+var dateTimeFormats = [...]string{
+	"2006-01-02T15:04:05Z07:00",
+	"Mon, 02 Jan 2006 15:04:05 -0700",
+	"Mon, 02 Jan 2006 15:04:05 GMT",
+	"2006-01-02 15:04:05",
+	"Mon,02 Jan 2006 15:04:05  -0700",
+	"2006-01-02 15:04:05 -0700 UTC",
+	"2006-01-02T15:04:05-07:00",
+	"Mon, 2 Jan 2006 15:04:05 GMT",
+	"2006-01-02T15:04:05-0700",
+}
+
 const dateTimeFormatFB = "2006-01-02T15:04:05-0700"
 
 var newsSource = map[string]string{
@@ -314,37 +321,26 @@ func fetchXML(url string) []byte {
 }
 
 func loadLocal(timetext string, tag string) time.Time {
+	var local time.Time
+	for i, layout := range dateTimeFormats {
+		var dateTimeErr error
+		local, dateTimeErr = time.Parse(layout, timetext)
+		if dateTimeErr == nil {
+			break
+		}
+
+		if i == len(dateTimeFormats) {
+			if dateTimeErr != nil {
+				log.Fatal(dateTimeErr)
+			}
+		}
+	}
+
 	location, loadLocationErr := time.LoadLocation(timeZone)
-
-	local, dateTimeErr := time.Parse(dateTimeFormat0, timetext)
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat1, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat2, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat3, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat4, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat5, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat6, timetext)
-	}
-	if dateTimeErr != nil {
-		local, dateTimeErr = time.Parse(dateTimeFormat7, timetext)
-	}
-
-	if dateTimeErr != nil {
-		fmt.Printf("Failed parse dateTime: %v\n", timetext)
-	}
-
 	if loadLocationErr == nil {
 		local = local.In(location)
+	} else {
+		log.Fatal(loadLocationErr)
 	}
 
 	switch tag {
@@ -364,6 +360,7 @@ func loadLocal(timetext string, tag string) time.Time {
 // LoadRSS loads rss from an url
 func LoadRSS(tag string, url string) []RssItem {
 	collect := []RssItem{}
+
 	p := bluemonday.NewPolicy()
 	parser := gofeed.NewParser()
 	feed, err := parser.ParseURL(url)
@@ -372,35 +369,50 @@ func LoadRSS(tag string, url string) []RssItem {
 		return collect
 	}
 
+	wgNews := make(chan RssItem)
+	var wg sync.WaitGroup
+	wg.Add(len(feed.Items))
+
 	for _, item := range feed.Items {
-		local := loadLocal(item.Published, tag)
+		go func(item *gofeed.Item) {
+			defer wg.Done()
+			local := loadLocal(item.Published, tag)
 
-		title := html.UnescapeString(p.Sanitize(item.Title))
+			title := html.UnescapeString(p.Sanitize(item.Title))
 
-		h := fnv.New32a()
-		h.Write([]byte(title))
-		hashnum := h.Sum32()
+			h := fnv.New32a()
+			h.Write([]byte(title))
+			hashnum := h.Sum32()
 
-		item.Link = fixedLink(item.Link, tag)
-		link, originLink := GetURL(item.Link)
-		source, keyword := GetNewsSource(item.Link)
+			item.Link = fixedLink(item.Link, tag)
+			link, originLink := GetURL(item.Link)
+			source, keyword := GetNewsSource(item.Link)
 
-		news := RssItem{
-			Link:        link,
-			OriginLink:  originLink,
-			Time:        local,
-			TimeText:    local.Format("15:04"),
-			Title:       title,
-			Source:      source,
-			Tag:         tag,
-			Status:      0,
-			Hash:        hashnum,
-			Keyword:     keyword,
-			Description: item.Description,
-		}
-
-		collect = append(collect, news)
+			news := RssItem{
+				Link:        link,
+				OriginLink:  originLink,
+				Time:        local,
+				TimeText:    local.Format("15:04"),
+				Title:       title,
+				Source:      source,
+				Tag:         tag,
+				Status:      0,
+				Hash:        hashnum,
+				Keyword:     keyword,
+				Description: item.Description,
+			}
+			wgNews <- RssItem(news)
+		}(item)
 	}
+
+	go func() {
+		for news := range wgNews {
+			collect = append(collect, news)
+		}
+	}()
+
+	wg.Wait()
+
 	return collect
 }
 
@@ -453,13 +465,14 @@ func GetURL(str string) (string, string) {
 
 // UinqueElements removes duplicates
 func UinqueElements(elements []RssItem) []RssItem {
-
+	collect := []RssItem{}
 	source0 := "中央通訊社"
 	source1 := "中時電子報"
 	cnaTitles := tagSources(elements, source0)
 	chinatimesTitles := tagSources(elements, source1)
 
 	var duplicated bool
+	var eleTitle string
 	tmp := make(map[string]RssItem, 0)
 	sort.Strings(cnaTitles)
 	for _, ele := range elements {
@@ -485,7 +498,13 @@ func UinqueElements(elements []RssItem) []RssItem {
 		}
 
 		if !duplicated {
-			tmp[ele.Title+ele.Source] = ele
+			if strings.HasSuffix(ele.Title, "！") {
+				wordLen := utf8.RuneCount([]byte(ele.Title))
+				eleTitle = string([]rune(ele.Title)[:wordLen-1])
+			} else {
+				eleTitle = ele.Title
+			}
+			tmp[eleTitle+ele.Source] = ele
 		}
 	}
 
@@ -508,33 +527,47 @@ func UinqueElements(elements []RssItem) []RssItem {
 	}
 
 	sort.Strings(duplicatedList)
-	var i int
 	for _, ele := range tmp2 {
 		n := sort.SearchStrings(duplicatedList, ele.Title)
 		if n < len(duplicatedList) && duplicatedList[n] == ele.Title {
 			ele.Source = source0
 		}
-		elements[i] = ele
-		i++
+		collect = append(collect, ele)
 	}
 
-	return elements[:len(tmp2)]
+	return collect
 }
 
 // tagSources get titles from a specific source
 func tagSources(elements []RssItem, source string) []string {
 	var titles []string
+
+	wgTitles := make(chan string)
+	var wg sync.WaitGroup
+	wg.Add(len(elements))
+
 	for _, ele := range elements {
-		if ele.Source == source {
-			ele.Title = strings.Map(func(r rune) rune {
-				if unicode.IsSpace(r) {
-					return -1
-				}
-				return r
-			}, ele.Title)
-			titles = append(titles, ele.Title)
-		}
+		go func(ele RssItem) {
+			defer wg.Done()
+			if ele.Source == source {
+				ele.Title = strings.Map(func(r rune) rune {
+					if unicode.IsSpace(r) {
+						return -1
+					}
+					return r
+				}, ele.Title)
+				wgTitles <- string(ele.Title)
+			}
+		}(ele)
 	}
+
+	go func() {
+		for title := range wgTitles {
+			titles = append(titles, title)
+		}
+	}()
+
+	wg.Wait()
 
 	return titles
 }
@@ -623,6 +656,8 @@ func newsFetcher(feeds map[string]string) []RssItem {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	var filterAPIPoint string
 	if os.Getenv("GIN_MODE") == "release" {
 		filterAPIPoint = "http://localhost/firenews/api/util/v1/"
