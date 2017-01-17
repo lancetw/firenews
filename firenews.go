@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 
@@ -298,6 +299,54 @@ func fetchXML(url string) []byte {
 	return xmldata
 }
 
+func loadLocal(timetext string, tag string) time.Time {
+	location, loadLocationErr := time.LoadLocation(timeZone)
+
+	local, dateTimeErr := time.Parse(dateTimeFormat0, timetext)
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat1, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat2, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat3, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat4, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat5, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat6, timetext)
+	}
+	if dateTimeErr != nil {
+		local, dateTimeErr = time.Parse(dateTimeFormat7, timetext)
+	}
+
+	if dateTimeErr != nil {
+		fmt.Printf("Failed parse dateTime: %v\n", timetext)
+	}
+
+	if loadLocationErr == nil {
+		local = local.In(location)
+	}
+
+	switch tag {
+	case "民眾日報（記者方詠騰）":
+		local = local.Add(-14 * time.Hour)
+	case "勁報（勁報記者羅蔚舟）":
+		local = local.Add(-8 * time.Hour)
+	case "大成報":
+		local = local.Add(-8 * time.Hour)
+	case "台灣新聞報（記者戴欣怡）":
+		local = local.Add(-8 * time.Hour)
+	}
+
+	return local
+}
+
 // LoadRSS loads rss from an url
 func LoadRSS(tag string, url string) []RssItem {
 	collect := []RssItem{}
@@ -309,50 +358,8 @@ func LoadRSS(tag string, url string) []RssItem {
 		return collect
 	}
 
-	location, loadLocationErr := time.LoadLocation(timeZone)
-
 	for _, item := range feed.Items {
-		local, dateTimeErr := time.Parse(dateTimeFormat0, item.Published)
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat1, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat2, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat3, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat4, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat5, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat6, item.Published)
-		}
-		if dateTimeErr != nil {
-			local, dateTimeErr = time.Parse(dateTimeFormat7, item.Published)
-		}
-
-		if dateTimeErr != nil {
-			fmt.Printf("Failed parse dateTime: %v\n", item.Published)
-		}
-
-		if loadLocationErr == nil {
-			local = local.In(location)
-		}
-
-		switch tag {
-		case "民眾日報（記者方詠騰）":
-			local = local.Add(-14 * time.Hour)
-		case "勁報（勁報記者羅蔚舟）":
-			local = local.Add(-8 * time.Hour)
-		case "大成報":
-			local = local.Add(-8 * time.Hour)
-		case "台灣新聞報（記者戴欣怡）":
-			local = local.Add(-8 * time.Hour)
-		}
+		local := loadLocal(item.Published, tag)
 
 		title := html.UnescapeString(p.Sanitize(item.Title))
 
@@ -570,6 +577,37 @@ func CJKnorm(s string) string {
 	return str
 }
 
+func newsFetcher(feeds map[string]string) []RssItem {
+	var news []RssItem
+
+	wgFeeds := make(chan []RssItem)
+	var wg sync.WaitGroup
+	wg.Add(len(feeds))
+
+	for tag, url := range feeds {
+		go func(tag string, url string) {
+			defer wg.Done()
+			data := LoadRSS(tag, url)
+			wgFeeds <- []RssItem(data)
+		}(tag, url)
+	}
+
+	go func() {
+		for feed := range wgFeeds {
+			news = append(news, feed...)
+		}
+	}()
+
+	wg.Wait()
+
+	news = UinqueElements(news)
+	news = CleanupElements(news)
+	news = ActiveElements(news)
+	sort.Sort(ByTime(news))
+
+	return news
+}
+
 func main() {
 	var filterAPIPoint string
 	if os.Getenv("GIN_MODE") == "release" {
@@ -687,226 +725,136 @@ func main() {
 	{
 		v1.GET("/main", func(c *gin.Context) {
 			includeText := "%E6%B6%88%E9%98%B2%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%81%BD%7C%E7%81%AB%E8%AD%A6%7C%E7%81%AB%E7%87%92%7C%E5%A4%A7%E7%81%AB%7C%E6%95%91%E8%AD%B7%7C%E6%95%91%E7%81%BD%7C%E9%80%81%E9%86%AB%7C%E8%AD%A6%E6%B6%88%7C%E7%BE%A9%E6%B6%88%7C%E8%90%BD%E8%BB%8C%7C%E8%B7%B3%E8%BB%8C%7C%E4%BD%8F%E8%AD%A6%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E8%AD%A6%E5%A0%B1%E5%99%A8%7C%E4%BD%8F%E5%AE%85%E7%81%AB%E8%AD%A6%E5%99%A8%7C%E5%8F%B0%E9%90%B5%E9%A6%99%E5%B1%B1%7C%E9%A6%99%E5%B1%B1%E7%81%AB%E8%BB%8A%E7%AB%99%7C%E9%A6%99%E5%B1%B1%E7%AB%99%7C%E9%9B%B2%E6%A2%AF%7C%E6%B6%88%E9%98%B2.%2A%E9%A6%99%E5%B1%B1%7C%E9%A6%99%E5%B1%B1.%2A%E6%B6%88%E9%98%B2%7CCPR"
-			var news [17]([]RssItem)
-			news[0] = LoadRSS("消防", "https://www.google.com.tw/alerts/feeds/04784784225885481651/1432933957568832221")
-			news[1] = LoadRSS("火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||台鐵香山||香山火車站||香山站||雲梯||打火", "https://www.google.com.tw/alerts/feeds/04784784225885481651/11834919735038606131")
-			news[2] = LoadRSS("救護", "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311")
-			news[3] = LoadRSS("救災", "https://www.google.com.tw/alerts/feeds/04784784225885481651/15512682411139935187")
-			news[4] = LoadRSS("送醫", "https://www.google.com.tw/alerts/feeds/04784784225885481651/7089524768908772692")
-			news[5] = LoadRSS("cpr", "https://www.google.com.tw/alerts/feeds/04784784225885481651/1999534239766046938")
-			news[6] = LoadRSS("蘋果日報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include="+includeText)
-			news[7] = LoadRSS("自由時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include="+includeText)
-			news[8] = LoadRSS("聯合新聞社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include="+includeText)
-			news[9] = LoadRSS("中國時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
-			news[10] = LoadRSS("蘋果日報國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F103&include="+includeText)
-			news[11] = LoadRSS("自由時報國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fworld.xml&include="+includeText)
-			news[12] = LoadRSS("聯合新聞國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2FBREAKINGNEWS4.xml&include="+includeText)
-			news[13] = LoadRSS("中國時報國際版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include="+includeText)
-			news[14] = LoadRSS("民眾日報（記者方詠騰）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
-			news[15] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
-			news[16] = LoadRSS("蘋果日報即時", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include="+includeText)
-			news[0] = append(news[0], news[1]...)
-			news[0] = append(news[0], news[2]...)
-			news[0] = append(news[0], news[3]...)
-			news[0] = append(news[0], news[4]...)
-			news[0] = append(news[0], news[5]...)
-			news[0] = append(news[0], news[6]...)
-			news[0] = append(news[0], news[7]...)
-			news[0] = append(news[0], news[8]...)
-			news[0] = append(news[0], news[9]...)
-			news[0] = append(news[0], news[10]...)
-			news[0] = append(news[0], news[11]...)
-			news[0] = append(news[0], news[12]...)
-			news[0] = append(news[0], news[13]...)
-			news[0] = append(news[0], news[14]...)
-			news[0] = append(news[0], news[15]...)
-			news[0] = append(news[0], news[16]...)
-			news[0] = UinqueElements(news[0])
-			news[0] = CleanupElements(news[0])
-			news[0] = ActiveElements(news[0])
-			sort.Sort(ByTime(news[0]))
+
+			feeds := map[string]string{
+				"消防": "https://www.google.com.tw/alerts/feeds/04784784225885481651/1432933957568832221",
+				"火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||台鐵香山||香山火車站||香山站||雲梯||打火": "https://www.google.com.tw/alerts/feeds/04784784225885481651/11834919735038606131",
+				"救護":  "https://www.google.com.tw/alerts/feeds/04784784225885481651/10937227332545439311",
+				"救災":  "https://www.google.com.tw/alerts/feeds/04784784225885481651/15512682411139935187",
+				"送醫":  "https://www.google.com.tw/alerts/feeds/04784784225885481651/7089524768908772692",
+				"cpr": "https://www.google.com.tw/alerts/feeds/04784784225885481651/1999534239766046938",
+				"蘋果日報社會版":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include=" + includeText,
+				"自由時報社會版":     filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include=" + includeText,
+				"聯合新聞社會版":     filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include=" + includeText,
+				"中國時報社會版":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include=" + includeText,
+				"蘋果日報國際版":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F103&include=" + includeText,
+				"自由時報國際版":     filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fworld.xml&include=" + includeText,
+				"聯合新聞國際版":     filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2FBREAKINGNEWS4.xml&include=" + includeText,
+				"中國時報國際版":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-international.xml&include=" + includeText,
+				"民眾日報（記者方詠騰）": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include=" + includeText,
+				"台灣新生報 地方綜合":  filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include=" + includeText,
+				"蘋果日報即時":      filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=" + includeText,
+			}
 
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 		v1.GET("/city", func(c *gin.Context) {
-			var news [12]([]RssItem)
 			includeText := "%E7%AB%B9%E5%B8%82"
-			news[0] = LoadRSS("Google 快訊 竹市||台鐵香山||香山火車站||香山站", "https://www.google.com.tw/alerts/feeds/04784784225885481651/2705564241123909653")
-			news[1] = LoadRSS("中國時報地方版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include="+includeText)
-			news[2] = LoadRSS("聯合新聞地方桃竹苗版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include="+includeText)
-			news[3] = LoadRSS("自由時報地方版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flocal.xml&include="+includeText)
-			news[4] = LoadRSS("蘋果日報地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F1076&include="+includeText)
-			news[5] = LoadRSS("中國時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
-			news[6] = LoadRSS("聯合新聞社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include="+includeText)
-			news[7] = LoadRSS("自由時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include="+includeText)
-			news[8] = LoadRSS("蘋果日報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include="+includeText)
-			news[9] = LoadRSS("民眾日報（記者方詠騰）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include="+includeText)
-			news[10] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
-			news[11] = LoadRSS("蘋果日報 要聞", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include="+includeText)
-			news[0] = append(news[0], news[1]...)
-			news[0] = append(news[0], news[2]...)
-			news[0] = append(news[0], news[3]...)
-			news[0] = append(news[0], news[4]...)
-			news[0] = append(news[0], news[5]...)
-			news[0] = append(news[0], news[6]...)
-			news[0] = append(news[0], news[7]...)
-			news[0] = append(news[0], news[8]...)
-			news[0] = append(news[0], news[9]...)
-			news[0] = append(news[0], news[10]...)
-			news[0] = append(news[0], news[11]...)
-			news[0] = UinqueElements(news[0])
-			news[0] = CleanupElements(news[0])
-			news[0] = ActiveElements(news[0])
-			sort.Sort(ByTime(news[0]))
+			feeds := map[string]string{
+				"Google 快訊 竹市||台鐵香山||香山火車站||香山站": "https://www.google.com.tw/alerts/feeds/04784784225885481651/2705564241123909653",
+				"中國時報地方版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Fchinatimes-local.xml&include=" + includeText,
+				"聯合新聞地方桃竹苗版":                     filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include=" + includeText,
+				"自由時報地方版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flocal.xml&include=" + includeText,
+				"蘋果日報地方綜合":                       filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F1076&include=" + includeText,
+				"中國時報社會版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include=" + includeText,
+				"聯合新聞社會版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Fsocial.xml&include=" + includeText,
+				"自由時報社會版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include=" + includeText,
+				"蘋果日報社會版":                        filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2F102&include=" + includeText,
+				"民眾日報（記者方詠騰）":                    filterAPIPoint + "filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss%2F&include=" + includeText,
+				"台灣新生報 地方綜合":                     filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include=" + includeText,
+				"蘋果日報 要聞":                        filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include=" + includeText,
+			}
 
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
-			var news [9]([]RssItem)
-			news[0] = LoadRSS("颱風", "https://www.google.com.tw/alerts/feeds/04784784225885481651/5973699102355057312")
-			news[1] = LoadRSS("熱帶低氣壓", "https://www.google.com.tw/alerts/feeds/04784784225885481651/9494720717694166142")
-			news[2] = LoadRSS("輕颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026830745")
-			news[3] = LoadRSS("中颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831531")
-			news[4] = LoadRSS("強颱", "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831346")
-			news[5] = LoadRSS("中國時報焦點", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-focus.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93")
-			news[6] = LoadRSS("聯合新聞最新", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93")
-			news[7] = LoadRSS("自由時報頭版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93")
-			news[8] = LoadRSS("蘋果日報最新", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93")
-
-			news[0] = append(news[0], news[1]...)
-			news[0] = append(news[0], news[2]...)
-			news[0] = append(news[0], news[3]...)
-			news[0] = append(news[0], news[4]...)
-			news[0] = append(news[0], news[5]...)
-			news[0] = append(news[0], news[6]...)
-			news[0] = append(news[0], news[7]...)
-			news[0] = append(news[0], news[8]...)
-			news[0] = UinqueElements(news[0])
-			news[0] = CleanupElements(news[0])
-			news[0] = ActiveElements(news[0])
-			sort.Sort(ByTime(news[0]))
+			feeds := map[string]string{
+				"颱風":     "https://www.google.com.tw/alerts/feeds/04784784225885481651/5973699102355057312",
+				"熱帶低氣壓":  "https://www.google.com.tw/alerts/feeds/04784784225885481651/9494720717694166142",
+				"輕颱":     "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026830745",
+				"中颱":     "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831531",
+				"強颱":     "https://www.google.com.tw/alerts/feeds/04784784225885481651/13369455153026831346",
+				"中國時報焦點": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-focus.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93",
+				"聯合新聞最新": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93",
+				"自由時報頭版": filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93",
+				"蘋果日報最新": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E9%A2%B1%E9%A2%A8%7C%E8%BC%95%E9%A2%B1%7C%E4%B8%AD%E9%A2%B1%7C%E5%BC%B7%E9%A2%B1%7C%E7%86%B1%E5%B8%B6%E4%BD%8E%E6%B0%A3%E5%A3%93",
+			}
 
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 		v1.GET("/earthquake", func(c *gin.Context) {
-			var news [5]([]RssItem)
-			news[0] = LoadRSS("地震", "https://www.google.com.tw/alerts/feeds/04784784225885481651/11159700034107135548")
-			news[1] = LoadRSS("中國時報總覽", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews.xml&include=%E5%9C%B0%E9%9C%87")
-			news[2] = LoadRSS("聯合新聞最新", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=%E5%9C%B0%E9%9C%87")
-			news[3] = LoadRSS("自由時報頭版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=%E5%9C%B0%E9%9C%87")
-			news[4] = LoadRSS("蘋果日報最新", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E5%9C%B0%E9%9C%87")
-
-			news[0] = append(news[0], news[1]...)
-			news[0] = append(news[0], news[2]...)
-			news[0] = append(news[0], news[3]...)
-			news[0] = append(news[0], news[4]...)
-			news[0] = UinqueElements(news[0])
-			news[0] = CleanupElements(news[0])
-			news[0] = ActiveElements(news[0])
-			sort.Sort(ByTime(news[0]))
+			feeds := map[string]string{
+				"地震":     "https://www.google.com.tw/alerts/feeds/04784784225885481651/11159700034107135548",
+				"中國時報總覽": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews.xml&include=%E5%9C%B0%E9%9C%87",
+				"聯合新聞最新": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=%E5%9C%B0%E9%9C%87",
+				"自由時報頭版": filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=%E5%9C%B0%E9%9C%87",
+				"蘋果日報最新": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=%E5%9C%B0%E9%9C%87",
+			}
 
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 		v1.GET("/ncdr", func(c *gin.Context) {
-			var news [1]([]RssItem)
-			news[0] = LoadRSS("地震", filterAPIPoint+"filter?type=cap&url=https://alerts.ncdr.nat.gov.tw/RssAtomFeed.ashx?AlertType=6")
+			feeds := map[string]string{
+				"地震": filterAPIPoint + "filter?type=cap&url=https://alerts.ncdr.nat.gov.tw/RssAtomFeed.ashx?AlertType=6",
+			}
+
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
 			includeText := "竹市.*火勢|火勢.*竹市|竹市.*大火|大火.*竹市|竹市.*火災|火災.*竹市|竹市.*火警|火警.*竹市|竹市.*消防|消防.*竹市|竹市.*住警器|住警器.*竹市|竹市.*住宅火警器|住宅火警器.*竹市|竹市.*雲梯|雲梯.*竹市|林智堅.*雲梯|雲梯.*林智堅|消防.*香山|香山.*消防|消防.*林智堅|林智堅.*消防|竹市.*義消|義消.*竹市|義消.*林智堅|林智堅.*義消|竹市.*防災|防災.*竹市|新竹.*淹水|淹水.*新竹|竹市.*淹水|淹水.*竹市|竹市.*CPR|CPR.*竹市|竹市.*AED|AED.*竹市|竹市.*救護|救護.*竹市|竹市.*特搜|特搜.*竹市|竹市.*搶救|搶救.*竹市|竹市.*救援|救援.*竹市|竹市.*警消|警消.*竹市|竹市.*鳳凰志工|鳳凰志工.*竹市|消安.*竹市|竹市.*消安|防火.*竹市|竹市.*防火|竄火.*竹市|竹市.*竄火|被燒.*竹市|竹市.*被燒|中毒.*竹市|竹市.*中毒|竹市.*臥軌|臥軌.*竹市|竹市.*跳軌|跳軌.*竹市|竹市.*落軌|落軌.*竹市|新竹.*臥軌|臥軌.*新竹|新竹.*跳軌|跳軌.*新竹|新竹.*落軌|落軌.*新竹"
-			var news [38]([]RssItem)
-			news[0] = LoadRSS("消防", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F1432933957568832221&include="+includeText)
-			news[1] = LoadRSS("聯合新聞網（記者王敏旭、林麒偉）", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
-			news[2] = LoadRSS("自由時報（記者王駿杰、蔡彰盛、洪美秀）", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include="+includeText)
-			news[3] = LoadRSS("中時電子報（記者徐養齡、郭芝函）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
-			news[4] = LoadRSS("中時電子報生活版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-life.xml&include="+includeText)
-			news[5] = LoadRSS("中時電子報地方版", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-local.xml&include="+includeText)
-			news[6] = LoadRSS("中央社（記者魯鋼駿）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include="+includeText)
-			news[7] = LoadRSS("勁報（勁報記者羅蔚舟）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.twpowernews.com%2Fhome%2Frss.php&include="+includeText)
-			news[8] = LoadRSS("真晨報（記者王萱）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2F5550555&include="+includeText)
-			news[9] = LoadRSS("臺灣時報（記者鄭銘德）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwtimesrss&include="+includeText)
-			news[10] = LoadRSS("ETtoday（新竹振道記者蔡文綺、記者萬世璉）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include="+includeText)
-			news[11] = LoadRSS("民眾日報（記者方詠騰）", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss&include="+includeText)
-			news[12] = LoadRSS("青年日報（記者余華昌）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fgov%2FckHD&include="+includeText)
-			news[13] = LoadRSS("台灣新聞報（記者戴欣怡）", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwnewsdaily&include="+includeText)
-			news[14] = LoadRSS("Google 快訊 竹市||台鐵香山||香山火車站||香山站", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include="+includeText)
-			news[15] = LoadRSS("Google 快訊 竹市消防局||勤務派遣科", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F7890686135979287740&include="+includeText)
-			news[16] = LoadRSS("Google 快訊 火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||臥軌||台鐵香山||香山火車站||香山站||雲梯||打火", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F11834919735038606131&include="+includeText)
-			news[17] = LoadRSS("Google 快訊 竹市 義消", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F18304303068024362009&include="+includeText)
-			news[18] = LoadRSS("Google 快訊 竹市 雲梯", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10993434182923813560&include="+includeText)
-			news[19] = LoadRSS("指傳媒", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2%26cat%3D2650&include="+includeText)
-			news[20] = LoadRSS("台灣好報 地方新聞", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fnewstaiwan&include="+includeText)
-			news[21] = LoadRSS("台灣新生報 地方綜合", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include="+includeText)
-			news[22] = LoadRSS("天眼日報 警消新聞", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include="+includeText)
-			//news[23] = LoadRSS("新竹市政府", filterAPIPoint + "filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText)
-			news[24] = LoadRSS("大成報", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.greatnews.com.tw%2Fhome%2Frss.php&include="+includeText)
-			news[25] = LoadRSS("聯合新聞網 地方桃竹苗版", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include="+includeText)
-			news[26] = LoadRSS("中華新聞網", filterAPIPoint+"filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fcdns&include="+includeText)
-			//news[27] = LoadRSS("蕃新聞", filterAPIPoint + "filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText)
-			news[28] = LoadRSS("蘋果日報 要聞", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include="+includeText)
-			news[29] = LoadRSS("自由時報社會版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include="+includeText)
-			news[30] = LoadRSS("聯合新聞網 即時 地方", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include="+includeText)
-			news[31] = LoadRSS("風傳媒 新竹頻道", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.storm.mg%2Ffeeds%2Fs36303&include="+includeText)
-			news[32] = LoadRSS("自由時報生活版", filterAPIPoint+"filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flife.xml&include="+includeText)
-			news[33] = LoadRSS("聯合新聞網 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include="+includeText)
-			news[34] = LoadRSS("台灣好新聞", filterAPIPoint+"filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F3504523367051993014&include="+includeText)
-			news[35] = LoadRSS("中時電子報 即時 社會", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include="+includeText)
-			news[36] = LoadRSS("聯合新聞網 地方", filterAPIPoint+"filter?url=https%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%3Fch%3Dnews&include="+includeText)
-			news[37] = LoadRSS("蘋果日報 即時", filterAPIPoint+"filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include="+includeText)
-			news[0] = append(news[0], news[1]...)
-			news[0] = append(news[0], news[2]...)
-			news[0] = append(news[0], news[3]...)
-			news[0] = append(news[0], news[4]...)
-			news[0] = append(news[0], news[5]...)
-			news[0] = append(news[0], news[6]...)
-			news[0] = append(news[0], news[7]...)
-			news[0] = append(news[0], news[8]...)
-			news[0] = append(news[0], news[9]...)
-			news[0] = append(news[0], news[10]...)
-			news[0] = append(news[0], news[11]...)
-			news[0] = append(news[0], news[12]...)
-			news[0] = append(news[0], news[13]...)
-			news[0] = append(news[0], news[14]...)
-			news[0] = append(news[0], news[15]...)
-			news[0] = append(news[0], news[16]...)
-			news[0] = append(news[0], news[17]...)
-			news[0] = append(news[0], news[18]...)
-			news[0] = append(news[0], news[19]...)
-			news[0] = append(news[0], news[20]...)
-			news[0] = append(news[0], news[21]...)
-			news[0] = append(news[0], news[22]...)
-			//news[0] = append(news[0], news[23]...)
-			news[0] = append(news[0], news[24]...)
-			news[0] = append(news[0], news[25]...)
-			news[0] = append(news[0], news[26]...)
-			//news[0] = append(news[0], news[27]...)
-			news[0] = append(news[0], news[28]...)
-			news[0] = append(news[0], news[29]...)
-			news[0] = append(news[0], news[30]...)
-			news[0] = append(news[0], news[31]...)
-			news[0] = append(news[0], news[32]...)
-			news[0] = append(news[0], news[33]...)
-			news[0] = append(news[0], news[34]...)
-			news[0] = append(news[0], news[35]...)
-			news[0] = append(news[0], news[36]...)
-			news[0] = append(news[0], news[37]...)
-			news[0] = UinqueElements(news[0])
-			news[0] = CleanupElements(news[0])
-			news[0] = ActiveAllElements(news[0])
-			sort.Sort(ByTime(news[0]))
+			feeds := map[string]string{
+				"消防": filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F1432933957568832221&include=" + includeText,
+				"聯合新聞網（記者王敏旭、林麒偉）":                                                                      filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include=" + includeText,
+				"自由時報（記者王駿杰、蔡彰盛、洪美秀）":                                                                   filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fnorthern.xml&include=" + includeText,
+				"中時電子報（記者徐養齡、郭芝函）":                                                                      filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include=" + includeText,
+				"中時電子報生活版":                                                                              filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-life.xml&include=" + includeText,
+				"中時電子報地方版":                                                                              filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-local.xml&include=" + includeText,
+				"中央社（記者魯鋼駿）":                                                                            filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Frsscna%2Flocal&include=" + includeText,
+				"勁報（勁報記者羅蔚舟）":                                                                           filterAPIPoint + "filter?url=http%3A%2F%2Fwww.twpowernews.com%2Fhome%2Frss.php&include=" + includeText,
+				"真晨報（記者王萱）":                                                                             filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2F5550555&include=" + includeText,
+				"臺灣時報（記者鄭銘德）":                                                                           filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwtimesrss&include=" + includeText,
+				"ETtoday（新竹振道記者蔡文綺、記者萬世璉）":                                                              filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fettoday%2Flocal&include=" + includeText,
+				"民眾日報（記者方詠騰）":                                                                           filterAPIPoint + "filter?url=http%3A%2F%2Fwww.mypeople.tw%2Frss&include=" + includeText,
+				"青年日報（記者余華昌）":                                                                           filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fgov%2FckHD&include=" + includeText,
+				"台灣新聞報（記者戴欣怡）":                                                                          filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftwnewsdaily&include=" + includeText,
+				"Google 快訊 竹市||台鐵香山||香山火車站||香山站":                                                        filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F2705564241123909653&include=" + includeText,
+				"Google 快訊 竹市消防局||勤務派遣科":                                                                filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F7890686135979287740&include=" + includeText,
+				"Google 快訊 火燒||火警||火災||大火||住警器||住宅警報器||住宅火警器||義消||落軌||跳軌||臥軌||台鐵香山||香山火車站||香山站||雲梯||打火": filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F11834919735038606131&include=" + includeText,
+				"Google 快訊 竹市 義消": filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F18304303068024362009&include=" + includeText,
+				"Google 快訊 竹市 雲梯": filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F10993434182923813560&include=" + includeText,
+				"指傳媒":             filterAPIPoint + "filter?url=http%3A%2F%2Fwww.fingermedia.tw%3Ffeed%3Drss2%26cat%3D2650&include=" + includeText,
+				"台灣好報 地方新聞":       filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fnewstaiwan&include=" + includeText,
+				"台灣新生報 地方綜合":      filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftssdnews&include=" + includeText,
+				"天眼日報 警消新聞":       filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Ftynews3&include=" + includeText,
+				//"新竹市政府": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.hccg.gov.tw%2FMunicipalNews%3Flanguage%3Dchinese%26websitedn%3Dou%3Dhccg%2Cou%3Dap_root%2Co%3Dhccg%2Cc%3Dtw&include="+includeText,
+				"大成報":          filterAPIPoint + "filter?url=http%3A%2F%2Fwww.greatnews.com.tw%2Fhome%2Frss.php&include=" + includeText,
+				"聯合新聞網 地方桃竹苗版": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%2F7324%3Fch%3Dnews&include=" + includeText,
+				"中華新聞網":        filterAPIPoint + "filter?url=http%3A%2F%2Ffeeds.feedburner.com%2Fcdns&include=" + includeText,
+				//"蕃新聞": filterAPIPoint + "filter?url=http%3A%2F%2Fn.yam.com%2FRSS%2FRss_society.xml&include="+includeText,
+				"蘋果日報 要聞":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Fsec%2Ftype%2F11&include=" + includeText,
+				"自由時報社會版":     filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Fsociety.xml&include=" + includeText,
+				"聯合新聞網 即時 地方": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F3%3Fch%3Dnews&include=" + includeText,
+				"風傳媒 新竹頻道":    filterAPIPoint + "filter?url=http%3A%2F%2Fwww.storm.mg%2Ffeeds%2Fs36303&include=" + includeText,
+				"自由時報生活版":     filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Flife.xml&include=" + includeText,
+				"聯合新聞網 即時 社會": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F1%2F2%3Fch%3Dnews&include=" + includeText,
+				"台灣好新聞":       filterAPIPoint + "filter?url=https%3A%2F%2Fwww.google.com.tw%2Falerts%2Ffeeds%2F04784784225885481651%2F3504523367051993014&include=" + includeText,
+				"中時電子報 即時 社會": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-society.xml&include=" + includeText,
+				"聯合新聞網 地方":    filterAPIPoint + "filter?url=https%3A%2F%2Fudn.com%2Frssfeed%2Fnews%2F2%2F6641%3Fch%3Dnews&include=" + includeText,
+				"蘋果日報 即時":     filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=" + includeText,
+			}
 
 			c.JSON(200, gin.H{
-				"news": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 	}
@@ -1007,12 +955,12 @@ func main() {
 	{
 		bloggerv1.GET("/feed/:id", func(c *gin.Context) {
 			includeText := c.Query("include")
-
-			var news [1]([]RssItem)
-			news[0] = LoadRSS("爆料公社", filterAPIPoint+"filter?url=http%3A%2F%2Fhcfdrss.blogspot.com%2Ffeeds%2Fposts%2Fdefault&include="+includeText)
+			feeds := map[string]string{
+				"爆料公社": filterAPIPoint + "filter?url=http%3A%2F%2Fhcfdrss.blogspot.com%2Ffeeds%2Fposts%2Fdefault&include=" + includeText,
+			}
 
 			c.JSON(200, gin.H{
-				"feed": news[0],
+				"news": newsFetcher(feeds),
 			})
 		})
 	}
