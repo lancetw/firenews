@@ -618,7 +618,7 @@ func main() {
 	}
 
 	router := gin.Default()
-	r.Use(gzip.Gzip(gzip.DefaultCompression))
+	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	router.LoadHTMLGlob("firenewsweb/dist/*.html")
 	router.Static("/static", "firenewsweb/dist/static/")
