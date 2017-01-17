@@ -72,6 +72,7 @@ var newsSource = map[string]string{
 	"ttv.com.tw":                      "台視新聞",
 	"cts.com.tw":                      "華視新聞",
 	"ithome.com.tw":                   "iThome Online",
+	"technews.tw":                     "科技新報",
 	"eradio.ner.gov.tw":               "國立教育廣播電台",
 	"mradio.com.tw":                   "全國廣播",
 	"musou.tw":                        "沃草國會無雙",
@@ -170,6 +171,11 @@ var newsSource = map[string]string{
 	"dronesplayer.com":                "飛新聞",
 	"hket.com":                        "香港經濟日報",
 	"mygonews.com":                    "MyGoNews",
+	"singtaousa.com":                  "星島日報",
+	"secretchina.com":                 "看中國",
+	"cardu.com.tw":                    "卡優新聞網",
+	"stheadline.com":                  "頭條日報",
+	"greenpeace.org":                  "綠色和平",
 }
 
 var blockedSource = map[string]bool{
@@ -198,6 +204,10 @@ var blockedSource = map[string]bool{
 	"yes-news.com":           true,
 	"hk.crntt.com":           true,
 	"hinet.net":              true,
+	"hket.com":               true,
+	"singtaousa.com":         true,
+	"secretchina.com":        true,
+	"greenpeace.org":         true,
 }
 
 var activedSource = map[string]bool{
