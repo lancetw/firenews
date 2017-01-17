@@ -167,6 +167,9 @@ var newsSource = map[string]string{
 	"cwb.gov.tw":                      "中央氣象局",
 	"yes-news.com":                    "熱新聞 YesNews",
 	"hk.crntt.com":                    "中國評論新聞網",
+	"dronesplayer.com":                "飛新聞",
+	"hket.com":                        "香港經濟日報",
+	"mygonews.com":                    "MyGoNews",
 }
 
 var blockedSource = map[string]bool{
