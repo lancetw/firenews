@@ -378,9 +378,6 @@ func LoadRSS(tag string, url string) []RssItem {
 	wg.Add(len(feed.Items))
 
 	for _, item := range feed.Items {
-
-		time.Sleep(1 * time.Second)
-
 		go func(item *gofeed.Item) {
 			defer wg.Done()
 			local := loadLocal(item.Published, tag)
@@ -475,14 +472,14 @@ func GetURL(str string) (string, string, error) {
 	}
 
 	errorCount := 0
-	maxErrorCount := 10
+	maxErrorCount := 99
 
 	for ok := true; ok; ok = errorCount < maxErrorCount {
 		url, shortenerErr := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
 		if shortenerErr != nil {
 			errorCount++
 			log.Println("retry [", errorCount, "]:", str)
-			time.Sleep(30 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else {
 			goCache.Set(longURL, url.Id, cache.DefaultExpiration)
 			return url.Id, longURL, nil
