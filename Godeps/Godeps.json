@@ -90,6 +90,11 @@
 			"Rev": "e38884aa48c1952a416ba35f3c276e4f02f9b40e"
 		},
 		{
+			"ImportPath": "github.com/patrickmn/go-cache",
+			"Comment": "v2.0.0-4-ge7a9def",
+			"Rev": "e7a9def80f35fe1b170b7b8b68871d59dea117e1"
+		},
+		{
 			"ImportPath": "golang.org/x/net/context",
 			"Rev": "daba796358cd2742b75aae05761f1b898c9f6a5c"
 		},

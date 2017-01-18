@@ -27,6 +27,7 @@ import (
 	"github.com/itsjamie/gin-cors"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
+	"github.com/patrickmn/go-cache"
 	"google.golang.org/api/googleapi/transport"
 	"google.golang.org/api/urlshortener/v1"
 )
@@ -224,6 +225,8 @@ var activedSource = map[string]bool{
 	"appledaily.com.tw": true,
 	"udn.com":           true,
 }
+
+var goCache *cache.Cache
 
 // ResultCap struct
 type ResultCap struct {
@@ -450,9 +453,14 @@ func CleanURL(str string) string {
 
 // GetURL cuts a string as url and makes short url
 func GetURL(str string) (string, string, error) {
-	developerKey := "AIzaSyBW-K5dEyqgBRCP5AWZyh61EbZLP4QkniA"
+	const developerKey = "AIzaSyBW-K5dEyqgBRCP5AWZyh61EbZLP4QkniA"
+
 	cleanedURL := CleanURL(str)
 	longURL, _ := URLDecode(cleanedURL)
+
+	if id, found := goCache.Get(str); found {
+		return id.(string), longURL, nil
+	}
 
 	client := &http.Client{
 		Transport: &transport.APIKey{Key: developerKey},
@@ -473,6 +481,7 @@ func GetURL(str string) (string, string, error) {
 			log.Println("retry [", errorCount, "]:", str)
 			time.Sleep(10 * time.Second)
 		} else {
+			goCache.Set(longURL, url.Id, cache.DefaultExpiration)
 			return url.Id, longURL, nil
 		}
 	}
@@ -674,6 +683,7 @@ func newsFetcher(feeds map[string]string) []RssItem {
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
+	goCache = cache.New(12*time.Hour, 1*time.Hour)
 
 	var filterAPIPoint string
 	if os.Getenv("GIN_MODE") == "release" {
