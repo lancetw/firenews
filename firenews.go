@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -681,6 +682,9 @@ func newsFetcher(feeds map[string]string) []RssItem {
 
 	go func() {
 		for feed := range wgFeeds {
+			for _, newItem := range feed {
+				fmt.Println(newItem.Title)
+			}
 			news = append(news, feed...)
 		}
 	}()
@@ -692,15 +696,11 @@ func newsFetcher(feeds map[string]string) []RssItem {
 	news = ActiveElements(news)
 	sort.Sort(ByTime(news))
 
-	for _, newItem := range news {
-		fmt.Println(newItem.Title)
-	}
-
 	return news
 }
 
 func main() {
-	//runtime.GOMAXPROCS(runtime.NumCPU())
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	goCache = cache.New(12*time.Hour, 1*time.Hour)
 
 	var filterAPIPoint string
