@@ -453,18 +453,31 @@ func GetURL(str string) (string, string, error) {
 	developerKey := "AIzaSyBW-K5dEyqgBRCP5AWZyh61EbZLP4QkniA"
 	cleanedURL := CleanURL(str)
 	longURL, _ := URLDecode(cleanedURL)
+
 	client := &http.Client{
 		Transport: &transport.APIKey{Key: developerKey},
 	}
-	svc, err := urlshortener.New(client)
-	if err != nil {
-		return "", "", errors.New("Unable to create UrlShortener service!")
+
+	svc, newErr := urlshortener.New(client)
+	if newErr != nil {
+		return "", "", newErr
 	}
-	url, err := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
-	if err != nil {
-		return "", "", errors.New("Unable to get shortUrl!")
+
+	errorCount := 0
+	maxErrorCount := 42
+
+	for ok := true; ok; ok = errorCount < maxErrorCount {
+		url, shortenerErr := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
+		if shortenerErr != nil {
+			errorCount++
+			log.Println("retry [", errorCount, "]:", str)
+			time.Sleep(60 * time.Second)
+		} else {
+			return url.Id, longURL, nil
+		}
 	}
-	return url.Id, longURL, nil
+
+	return "", "", errors.New("GetURL failed.")
 }
 
 // UinqueElements removes duplicates
