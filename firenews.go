@@ -371,7 +371,6 @@ func LoadRSS(tag string, url string) []RssItem {
 	}
 
 	wgNews := make(chan RssItem)
-	wgErrs := make(chan error)
 	var wg sync.WaitGroup
 	wg.Add(len(feed.Items))
 
@@ -389,7 +388,6 @@ func LoadRSS(tag string, url string) []RssItem {
 			item.Link = fixedLink(item.Link, tag)
 			link, originLink, getURLErr := GetURL(item.Link)
 			if getURLErr != nil {
-				wgErrs <- getURLErr
 				return
 			}
 			source, keyword := GetNewsSource(item.Link)
@@ -409,10 +407,6 @@ func LoadRSS(tag string, url string) []RssItem {
 			}
 			wgNews <- RssItem(news)
 		}(item)
-	}
-
-	if err := <-wgErrs; err != nil {
-		return collect
 	}
 
 	go func() {
