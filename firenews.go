@@ -412,7 +412,7 @@ func LoadRSS(tag string, url string) []RssItem {
 	}
 
 	if err := <-wgErrs; err != nil {
-		log.Fatal(err)
+		return collect
 	}
 
 	go func() {
