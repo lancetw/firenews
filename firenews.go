@@ -429,12 +429,13 @@ func LoadRSS(tag string, url string) []RssItem {
 	}
 
 	go func() {
-		for news := range wgNews {
-			collect = append(collect, news)
-		}
+		wg.Wait()
+		close(wgNews)
 	}()
 
-	wg.Wait()
+	for news := range wgNews {
+		collect = append(collect, news)
+	}
 
 	return collect
 }
@@ -604,12 +605,13 @@ func tagSources(elements []RssItem, source string) []string {
 	}
 
 	go func() {
-		for title := range wgTitles {
-			titles = append(titles, title)
-		}
+		wg.Wait()
+		close(wgTitles)
 	}()
 
-	wg.Wait()
+	for title := range wgTitles {
+		titles = append(titles, title)
+	}
 
 	return titles
 }
@@ -681,14 +683,13 @@ func newsFetcher(feeds map[string]string) []RssItem {
 	}
 
 	go func() {
-		for feed := range wgFeeds {
-			for _, item := range feed {
-				news = append(news, item)
-			}
-		}
+		wg.Wait()
+		close(wgFeeds)
 	}()
 
-	wg.Wait()
+	for feed := range wgFeeds {
+		news = append(news, feed...)
+	}
 
 	news = UinqueElements(news)
 	news = CleanupElements(news)
