@@ -683,6 +683,7 @@ func newsFetcher(feeds map[string]string) []RssItem {
 	go func() {
 		for feed := range wgFeeds {
 			news = append(news, feed...)
+			log.Printf("%v ", len(news))
 		}
 	}()
 
