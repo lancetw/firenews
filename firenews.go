@@ -692,6 +692,10 @@ func newsFetcher(feeds map[string]string) []RssItem {
 	news = ActiveElements(news)
 	sort.Sort(ByTime(news))
 
+	for _, newItem := range news {
+		fmt.Println(newItem.Title)
+	}
+
 	return news
 }
 
