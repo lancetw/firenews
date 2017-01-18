@@ -682,10 +682,9 @@ func newsFetcher(feeds map[string]string) []RssItem {
 
 	go func() {
 		for feed := range wgFeeds {
-			for _, newItem := range feed {
-				fmt.Println(newItem.Title)
+			for _, item := range feed {
+				news = append(news, item)
 			}
-			news = append(news, feed...)
 		}
 	}()
 
