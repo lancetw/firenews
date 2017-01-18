@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"regexp"
-	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -697,7 +696,7 @@ func newsFetcher(feeds map[string]string) []RssItem {
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	//runtime.GOMAXPROCS(runtime.NumCPU())
 	goCache = cache.New(12*time.Hour, 1*time.Hour)
 
 	var filterAPIPoint string
