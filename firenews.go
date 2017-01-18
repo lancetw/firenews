@@ -454,11 +454,11 @@ func GetURL(str string) (string, string) {
 	}
 	svc, err := urlshortener.New(client)
 	if err != nil {
-		log.Println("Unable to create UrlShortener service!")
+		log.Fatal("Unable to create UrlShortener service!")
 	}
 	url, err := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
 	if err != nil {
-		log.Println("Unable to get shortUrl!")
+		log.Fatal("Unable to get shortUrl!")
 	}
 	return url.Id, longURL
 }
@@ -764,7 +764,7 @@ func main() {
 
 			rss, err := newFeed.ToRss()
 			if err != nil {
-				log.Println(err)
+				log.Fatal(err)
 			}
 
 			c.String(http.StatusOK, "%v", rss)
