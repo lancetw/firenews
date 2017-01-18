@@ -367,9 +367,25 @@ func LoadRSS(tag string, url string) []RssItem {
 
 	p := bluemonday.NewPolicy()
 	parser := gofeed.NewParser()
-	feed, err := parser.ParseURL(url)
-	if err != nil {
-		log.Printf("Failed fetch and parse the feed: %s\n", url)
+
+	errorCount := 0
+	maxErrorCount := 99
+
+	var feed *gofeed.Feed
+	var parserErr error
+	for ok := true; ok; ok = errorCount < maxErrorCount {
+		feed, parserErr = parser.ParseURL(url)
+		if parserErr != nil {
+			errorCount++
+			log.Println("retry [", errorCount, "]:", url)
+			time.Sleep(1 * time.Second)
+		} else {
+			break
+		}
+	}
+
+	if parserErr != nil {
+		log.Printf("%v", parserErr)
 		return collect
 	}
 
@@ -660,8 +676,7 @@ func newsFetcher(feeds map[string]string) []RssItem {
 	for tag, url := range feeds {
 		go func(tag string, url string) {
 			defer wg.Done()
-			data := LoadRSS(tag, url)
-			wgFeeds <- []RssItem(data)
+			wgFeeds <- LoadRSS(tag, url)
 		}(tag, url)
 	}
 
