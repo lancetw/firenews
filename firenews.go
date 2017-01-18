@@ -306,14 +306,14 @@ func fetchXML(url string) []byte {
 	}
 	resp, err := netClient.Get(url)
 	if err != nil {
-		fmt.Printf("fetchXML http.Get error: %v", err)
+		log.Printf("fetchXML http.Get error: %v", err)
 		os.Exit(1)
 	}
 
 	xmldata, ioErr := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if ioErr != nil {
-		fmt.Printf("fetchXML ioutil.ReadAll error: %v", err)
+		log.Printf("fetchXML ioutil.ReadAll error: %v", err)
 		return nil
 	}
 
@@ -331,7 +331,7 @@ func loadLocal(timetext string, tag string) time.Time {
 
 		if i == len(dateTimeFormats) {
 			if dateTimeErr != nil {
-				log.Fatal(dateTimeErr)
+				log.Println(dateTimeErr)
 			}
 		}
 	}
@@ -340,7 +340,7 @@ func loadLocal(timetext string, tag string) time.Time {
 	if loadLocationErr == nil {
 		local = local.In(location)
 	} else {
-		log.Fatal(loadLocationErr)
+		log.Println(loadLocationErr)
 	}
 
 	switch tag {
@@ -365,7 +365,7 @@ func LoadRSS(tag string, url string) []RssItem {
 	parser := gofeed.NewParser()
 	feed, err := parser.ParseURL(url)
 	if err != nil {
-		fmt.Printf("Failed fetch and parse the feed: %s\n", url)
+		log.Printf("Failed fetch and parse the feed: %s\n", url)
 		return collect
 	}
 
@@ -454,11 +454,11 @@ func GetURL(str string) (string, string) {
 	}
 	svc, err := urlshortener.New(client)
 	if err != nil {
-		panic("Unable to create UrlShortener service!")
+		log.Println("Unable to create UrlShortener service!")
 	}
 	url, err := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
 	if err != nil {
-		panic("Unable to get shortUrl!")
+		log.Println("Unable to get shortUrl!")
 	}
 	return url.Id, longURL
 }
@@ -764,7 +764,7 @@ func main() {
 
 			rss, err := newFeed.ToRss()
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 
 			c.String(http.StatusOK, "%v", rss)
@@ -923,7 +923,7 @@ func main() {
 			id := c.Param("id")
 			res, fbErr := session.Get("/"+id+"/feed", nil)
 			if fbErr != nil {
-				fmt.Println(fbErr)
+				log.Println(fbErr)
 				return
 			}
 
@@ -932,7 +932,7 @@ func main() {
 
 			res, fbErr = session.Get("/"+id, nil)
 			if fbErr != nil {
-				fmt.Println(fbErr)
+				log.Println(fbErr)
 				return
 			}
 
