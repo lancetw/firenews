@@ -479,7 +479,7 @@ func GetURL(str string) (string, string, error) {
 		if shortenerErr != nil {
 			errorCount++
 			log.Println("retry [", errorCount, "]:", str)
-			time.Sleep(10 * time.Second)
+			time.Sleep(90 * time.Second)
 		} else {
 			goCache.Set(longURL, url.Id, cache.DefaultExpiration)
 			return url.Id, longURL, nil
