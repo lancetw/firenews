@@ -464,14 +464,14 @@ func GetURL(str string) (string, string, error) {
 	}
 
 	errorCount := 0
-	maxErrorCount := 42
+	maxErrorCount := 10
 
 	for ok := true; ok; ok = errorCount < maxErrorCount {
 		url, shortenerErr := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
 		if shortenerErr != nil {
 			errorCount++
 			log.Println("retry [", errorCount, "]:", str)
-			time.Sleep(60 * time.Second)
+			time.Sleep(10 * time.Second)
 		} else {
 			return url.Id, longURL, nil
 		}
