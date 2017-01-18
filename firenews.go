@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"hash/fnv"
 	"html"
@@ -385,7 +386,10 @@ func LoadRSS(tag string, url string) []RssItem {
 			hashnum := h.Sum32()
 
 			item.Link = fixedLink(item.Link, tag)
-			link, originLink := GetURL(item.Link)
+			link, originLink, getURLErr := GetURL(item.Link)
+			if getURLErr != nil {
+				return
+			}
 			source, keyword := GetNewsSource(item.Link)
 
 			news := RssItem{
@@ -445,7 +449,7 @@ func CleanURL(str string) string {
 }
 
 // GetURL cuts a string as url and makes short url
-func GetURL(str string) (string, string) {
+func GetURL(str string) (string, string, error) {
 	developerKey := "AIzaSyBW-K5dEyqgBRCP5AWZyh61EbZLP4QkniA"
 	cleanedURL := CleanURL(str)
 	longURL, _ := URLDecode(cleanedURL)
@@ -454,13 +458,13 @@ func GetURL(str string) (string, string) {
 	}
 	svc, err := urlshortener.New(client)
 	if err != nil {
-		log.Fatal("Unable to create UrlShortener service!")
+		return "", "", errors.New("Unable to create UrlShortener service!")
 	}
 	url, err := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
 	if err != nil {
-		log.Fatal("Unable to get shortUrl!")
+		return "", "", errors.New("Unable to get shortUrl!")
 	}
-	return url.Id, longURL
+	return url.Id, longURL, nil
 }
 
 // UinqueElements removes duplicates
