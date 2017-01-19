@@ -355,15 +355,21 @@ func loadLocal(timetext string, tag string) time.Time {
 		log.Println(loadLocationErr)
 	}
 
-	switch tag {
-	case "民眾日報（記者方詠騰）":
-		local = local.Add(-14 * time.Hour)
-	case "勁報（勁報記者羅蔚舟）":
-		local = local.Add(-8 * time.Hour)
-	case "大成報":
-		local = local.Add(-8 * time.Hour)
-	case "台灣新聞報（記者戴欣怡）":
-		local = local.Add(-8 * time.Hour)
+	if tag != "" {
+		switch tag {
+		case "民眾日報（記者方詠騰）":
+			local = local.Add(-14 * time.Hour)
+		case "勁報（勁報記者羅蔚舟）":
+			local = local.Add(-8 * time.Hour)
+		case "大成報":
+			local = local.Add(-8 * time.Hour)
+		case "台灣新聞報（記者戴欣怡）":
+			local = local.Add(-8 * time.Hour)
+		case "蕃新聞 地方":
+			local = local.Add(-8 * time.Hour)
+		case "蕃新聞 社會":
+			local = local.Add(-8 * time.Hour)
+		}
 	}
 
 	return local
