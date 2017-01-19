@@ -682,7 +682,7 @@ func CJKnorm(s string) string {
 	return str
 }
 
-func newsFetcher(feeds map[string]string) []RssItem {
+func newsFetcher(feeds map[string]string, activeAll bool) []RssItem {
 	var news []RssItem
 
 	wgFeeds := make(chan []RssItem)
@@ -707,7 +707,12 @@ func newsFetcher(feeds map[string]string) []RssItem {
 
 	news = UinqueElements(news)
 	news = CleanupElements(news)
-	news = ActiveElements(news)
+	if activeAll {
+		news = ActiveAllElements(news)
+	} else {
+		news = ActiveElements(news)
+	}
+
 	sort.Sort(ByTime(news))
 
 	return news
@@ -856,7 +861,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 		v1.GET("/city", func(c *gin.Context) {
@@ -877,7 +882,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
@@ -894,7 +899,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 		v1.GET("/earthquake", func(c *gin.Context) {
@@ -907,7 +912,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 		v1.GET("/ncdr", func(c *gin.Context) {
@@ -916,7 +921,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 		v1.GET("/hcfd", func(c *gin.Context) {
@@ -964,7 +969,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 	}
@@ -1070,7 +1075,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds),
+				"news": newsFetcher(feeds, true),
 			})
 		})
 	}
