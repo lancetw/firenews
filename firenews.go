@@ -882,7 +882,7 @@ func main() {
 			}
 
 			c.JSON(200, gin.H{
-				"news": newsFetcher(feeds, true),
+				"news": newsFetcher(feeds, false),
 			})
 		})
 		v1.GET("/typhon", func(c *gin.Context) {
