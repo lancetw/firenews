@@ -185,6 +185,10 @@ var newsSource = map[string]string{
 	"cardu.com.tw":                    "卡優新聞網",
 	"stheadline.com":                  "頭條日報",
 	"greenpeace.org":                  "綠色和平",
+	"taoyuan-airport.com":             "桃園國際機場",
+	"orientaldaily.com.my":            "東方網",
+	"metroradio.com.hk":               "新城電台",
+	"radiovaticana.va":                "梵蒂岡廣播電台",
 }
 
 var blockedSource = map[string]bool{
@@ -217,6 +221,10 @@ var blockedSource = map[string]bool{
 	"singtaousa.com":         true,
 	"secretchina.com":        true,
 	"greenpeace.org":         true,
+	"taoyuan-airport.com":    true,
+	"orientaldaily.com.my":   true,
+	"metroradio.com.hk":      true,
+	"radiovaticana.va":       true,
 }
 
 var activedSource = map[string]bool{
