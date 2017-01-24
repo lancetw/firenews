@@ -334,7 +334,7 @@ func fetchXML(url string) []byte {
 	resp, err := netClient.Get(url)
 	if err != nil {
 		log.Printf("fetchXML http.Get error: %v", err)
-		os.Exit(1)
+		return nil
 	}
 
 	xmldata, ioErr := ioutil.ReadAll(resp.Body)
@@ -841,7 +841,9 @@ func main() {
 
 			rss, err := newFeed.ToRss()
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				c.String(http.StatusServiceUnavailable, "%v", err)
+				return
 			}
 
 			c.String(http.StatusOK, "%v", rss)
