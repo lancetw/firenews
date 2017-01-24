@@ -540,8 +540,8 @@ func UinqueElements(elements []RssItem) []RssItem {
 	collect := []RssItem{}
 	source0 := "中央通訊社"
 	source1 := "中時電子報"
-	cnaTitles := tagSources(elements, source0)
-	chinatimesTitles := tagSources(elements, source1)
+	cnaTitles := getTitlesBySource(elements, source0)
+	chinatimesTitles := getTitlesBySource(elements, source1)
 
 	var duplicated bool
 	var eleTitle string
@@ -610,8 +610,8 @@ func UinqueElements(elements []RssItem) []RssItem {
 	return collect
 }
 
-// tagSources get titles from a specific source
-func tagSources(elements []RssItem, source string) []string {
+// getTitlesBySource get titles from a specific source
+func getTitlesBySource(elements []RssItem, source string) []string {
 	var titles []string
 
 	wgTitles := make(chan string)
