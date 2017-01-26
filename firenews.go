@@ -540,6 +540,8 @@ func UinqueElements(elements []RssItem) []RssItem {
 	collect := []RssItem{}
 	source0 := "中央通訊社"
 	source1 := "中時電子報"
+	source2 := "自由時報電子報"
+
 	cnaTitles := getTitlesBySource(elements, source0)
 	chinatimesTitles := getTitlesBySource(elements, source1)
 
@@ -587,7 +589,7 @@ func UinqueElements(elements []RssItem) []RssItem {
 		duplicated = false
 		n := sort.SearchStrings(chinatimesTitles, ele.Title)
 		if n < len(chinatimesTitles) && chinatimesTitles[n] == ele.Title {
-			if ele.Source != source1 {
+			if ele.Source == source2 {
 				duplicated = true
 				duplicatedList = append(duplicatedList, ele.Title)
 			}
