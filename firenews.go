@@ -199,6 +199,8 @@ var newsSource = map[string]string{
 	"newsgogogo.com":                          "新聞追追追",
 	"metrodaily.hk":                           "都市日報",
 	"news.gov.hk":                             "香港政府新聞網",
+	"mirrormedia.mg":                          "鏡傳媒",
+	"upmedia.mg":                              "上報",
 }
 
 var blockedSource = map[string]bool{
@@ -832,6 +834,9 @@ func main() {
 						Created:     created,
 					})
 				} else {
+					if item.Description == "" {
+						item.Description = item.Content
+					}
 					newFeed.Items = append(newFeed.Items, &feeds.Item{
 						Title:       item.Title,
 						Link:        &feeds.Link{Href: item.Link},
