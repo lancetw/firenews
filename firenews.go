@@ -908,13 +908,13 @@ func main() {
 			})
 		})
 		v1.GET("/drought", func(c *gin.Context) {
-			includeText := "乾旱|缺水|旱災|停水|限水|水情|旱季"
+			includeText := "乾旱|缺水|旱災|停水|限水|水情|旱季|供水|蓄水"
 			feeds := map[string]string{
-				"Google 快訊 乾旱||缺水||旱災||停水||限水||水情||旱季": "https://www.google.com.tw/alerts/feeds/04784784225885481651/15900314494794676328",
-				"中國時報焦點":                               filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-focus.xml&include=" + includeText,
-				"聯合新聞最新":                               filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=" + includeText,
-				"自由時報頭版":                               filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=" + includeText,
-				"蘋果日報最新":                               filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=" + includeText,
+				"Google 快訊 乾旱||缺水||旱災||停水||限水||水情||旱季||供水||蓄水": "https://www.google.com.tw/alerts/feeds/04784784225885481651/15900314494794676328",
+				"中國時報焦點": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-focus.xml&include=" + includeText,
+				"聯合新聞最新": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=" + includeText,
+				"自由時報頭版": filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=" + includeText,
+				"蘋果日報最新": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.appledaily.com.tw%2Frss%2Fcreate%2Fkind%2Frnews%2Ftype%2Fnew&include=" + includeText,
 			}
 
 			c.JSON(200, gin.H{
