@@ -400,7 +400,7 @@ func LoadRSS(tag string, url string) []RssItem {
 	parser := gofeed.NewParser()
 
 	errorCount := 0
-	maxErrorCount := 99
+	maxErrorCount := 0
 
 	var feed *gofeed.Feed
 	var parserErr error
@@ -520,7 +520,7 @@ func GetURL(str string) (string, string, error) {
 	}
 
 	errorCount := 0
-	maxErrorCount := 1
+	maxErrorCount := 0
 
 	for ok := true; ok; ok = errorCount < maxErrorCount {
 		url, shortenerErr := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
