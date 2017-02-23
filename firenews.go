@@ -520,7 +520,7 @@ func GetURL(str string) (string, string, error) {
 	}
 
 	errorCount := 0
-	maxErrorCount := 99
+	maxErrorCount := 1
 
 	for ok := true; ok; ok = errorCount < maxErrorCount {
 		url, shortenerErr := svc.Url.Insert(&urlshortener.Url{LongUrl: longURL}).Do()
