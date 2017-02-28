@@ -910,7 +910,7 @@ func main() {
 		v1.GET("/drought", func(c *gin.Context) {
 			includeText := "竹市.*乾旱|乾旱.*竹市|竹市.*缺水|缺水.*竹市|竹市.*旱災|旱災.*竹市|竹市.*停水|停水.*竹市|竹市.*限水|限水.*竹市|竹市.*水情|水情.*竹市|竹市.*旱季|旱季.*竹市|竹市.*供水|供水.*竹市|竹市.*蓄水|蓄水.*竹市"
 			feeds := map[string]string{
-				"Google 快訊 乾旱||缺水||旱災||停水||限水||水情||旱季||供水||蓄水": filterAPIPoint + "filter?url=https://www.google.com.tw/alerts/feeds/04784784225885481651/15900314494794676328&include=" + includeText,
+				"Google 快訊 乾旱||缺水||旱災||停水||限水||水情||旱季||供水||蓄水": "https://www.google.com.tw/alerts/feeds/04784784225885481651/15900314494794676328",
 				"中國時報焦點": filterAPIPoint + "filter?url=http%3A%2F%2Fwww.chinatimes.com%2Frss%2Frealtimenews-focus.xml&include=" + includeText,
 				"聯合新聞最新": filterAPIPoint + "filter?url=http%3A%2F%2Fudn.com%2Fudnrss%2Flatest.xml&include=" + includeText,
 				"自由時報頭版": filterAPIPoint + "filter?url=http%3A%2F%2Fnews.ltn.com.tw%2Frss%2Ffocus.xml&include=" + includeText,
