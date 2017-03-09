@@ -201,6 +201,7 @@ var newsSource = map[string]string{
 	"news.gov.hk":                             "香港政府新聞網",
 	"mirrormedia.mg":                          "鏡傳媒",
 	"upmedia.mg":                              "上報",
+	"taiwanese.win":                           "taiwanese.win",
 }
 
 var blockedSource = map[string]bool{
@@ -242,6 +243,7 @@ var blockedSource = map[string]bool{
 	"metrodaily.hk":             true,
 	"skypost.ulifestyle.com.hk": true,
 	"881903.com":                true,
+	"taiwanese.win":             true,
 }
 
 var activedSource = map[string]bool{
